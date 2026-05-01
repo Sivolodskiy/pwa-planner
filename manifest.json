@@ -1,0 +1,16 @@
+{
+  "name": "Мой Планер",
+  "short_name": "Планер",
+  "description": "Ежедневник с дедлайнами",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#4f46e5",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
