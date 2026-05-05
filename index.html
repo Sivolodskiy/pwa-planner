@@ -7,308 +7,187 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#14b8a6">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        @keyframes splashFadeOut {
-            0% { opacity: 1; visibility: visible; }
-            80% { opacity: 0.8; }
-            100% { opacity: 0; visibility: hidden; }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            animation: splashFadeOut 1.5s ease-in-out 2.5s forwards;
-        }
-        
-        .splash-content {
-            text-align: center;
-            color: white;
-            padding: 30px;
-            animation: fadeIn 0.8s ease-out;
-        }
-        
-        .splash-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            animation: bounce 1s ease infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .splash-title {
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-        
-        .splash-text {
-            font-size: 1.1rem;
-            opacity: 0.95;
-            line-height: 1.5;
-        }
-        
-        .app-content {
-            animation: fadeIn 0.8s ease-out;
-            opacity: 0;
-            animation-fill-mode: forwards;
-            animation-delay: 3s;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            transition: background 0.3s ease, color 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.3s ease;
         }
         
-        /* Тема по умолчанию (бирюзовая) */
+        /* ТЕМЫ */
         body.theme-teal {
             background: linear-gradient(135deg, #ccfbf1 0%, #f0fdfa 100%);
             color: #1e293b;
         }
-        
-        body.theme-teal::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: repeating-linear-gradient(45deg, rgba(20,184,166,0.08) 0px, rgba(20,184,166,0.08) 2px, transparent 2px, transparent 12px);
-            pointer-events: none;
-            z-index: -1;
-        }
-        
         body.theme-teal header { background: #14b8a6; }
-        body.theme-teal #addBtn { background: #14b8a6; color: white; }
-        body.theme-teal h1 { color: white; }
         body.theme-teal .date-btn.active { background: #14b8a6; color: white; }
+        body.theme-teal #addBtn { background: #14b8a6; }
+        body.theme-teal .tab-btn.active { background: #14b8a6; }
         
-        /* Тёмная тема */
         body.theme-dark {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: #e2e8f0;
         }
-        
-        body.theme-dark header {
-            background: #0f172a;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        
-        body.theme-dark h1 { color: #14b8a6; }
-        body.theme-dark #addBtn { background: #14b8a6; color: white; }
-        
+        body.theme-dark header { background: #0f172a; }
         body.theme-dark .stats,
         body.theme-dark .task-list,
-        body.theme-dark .modal-content {
-            background: #334155;
-            color: #f1f5f9;
-            border-color: #475569;
-        }
-        
-        body.theme-dark .stats div {
-            background: #1e293b;
-            color: #f1f5f9;
-        }
-        
-        body.theme-dark .date-btn {
-            background: #334155;
-            color: #f1f5f9;
-            border: 1px solid #475569;
-        }
-        
-        body.theme-dark .date-btn.active {
-            background: #14b8a6;
-            color: #0f172a;
-            border: none;
-        }
-        
-        body.theme-dark .task-item {
-            border-bottom-color: #475569;
-        }
-        
-        body.theme-dark .task-item:hover {
-            background: #1e293b;
-        }
-        
-        body.theme-dark .category-badge {
-            background: #1e293b;
-            color: #14b8a6;
-        }
-        
+        body.theme-dark .date-btn,
         body.theme-dark .add-task-panel input,
-        body.theme-dark .add-task-panel select {
-            background: #334155;
-            color: #f1f5f9;
-            border-color: #475569;
-        }
+        body.theme-dark .add-task-panel select,
+        body.theme-dark .modal-content,
+        body.theme-dark .empty { background: #334155; color: #f1f5f9; border-color: #475569; }
+        body.theme-dark .stats div { background: #1e293b; color: #f1f5f9; }
+        body.theme-dark .date-btn.active { background: #14b8a6; color: #0f172a; }
+        body.theme-dark .task-item { border-bottom-color: #475569; }
+        body.theme-dark .task-item:hover { background: #1e293b; }
+        body.theme-dark .category-badge { background: #1e293b; color: #14b8a6; }
+        body.theme-dark .tab-btn { background: #334155; color: #f1f5f9; }
+        body.theme-dark .tab-btn.active { background: #14b8a6; color: #0f172a; }
+        body.theme-dark .level-card { background: #1e293b; color: #f1f5f9; }
+        body.theme-dark .level-card.current { background: #0f766e; border-color: #14b8a6; }
         
-        body.theme-dark .add-task-panel input::placeholder {
-            color: #94a3b8;
-        }
-        
-        body.theme-dark .profile-stats {
-            background: #1e293b;
-            color: #f1f5f9;
-        }
-        
-        body.theme-dark .tab-btn {
-            background: #334155;
-            color: #f1f5f9;
-        }
-        
-        body.theme-dark .tab-btn.active {
-            background: #14b8a6;
-            color: #0f172a;
-        }
-        
-        body.theme-dark .level-card {
-            background: #1e293b;
-            color: #f1f5f9;
-        }
-        
-        body.theme-dark .level-card.current {
-            background: #0f766e;
-            border-color: #14b8a6;
-        }
-        
-        body.theme-dark .emoji-panel {
-            background: #334155;
-        }
-        
-        body.theme-dark .emoji-panel-option {
-            background: #1e293b;
-            color: white;
-        }
-        
-        body.theme-dark .version {
-            color: #94a3b8;
-        }
-        
-        /* Фиолетовая тема */
         body.theme-purple {
             background: linear-gradient(135deg, #e9d5ff 0%, #f3e8ff 100%);
             color: #4c1d95;
         }
-        
         body.theme-purple header { background: #8b5cf6; }
-        body.theme-purple h1 { color: white; }
-        body.theme-purple #addBtn { background: #8b5cf6; color: white; }
-        body.theme-purple .stats,
-        body.theme-purple .task-list,
-        body.theme-purple .date-btn { background: #faf5ff; }
-        body.theme-purple .date-btn.active { background: #8b5cf6; color: white; }
+        body.theme-purple .date-btn.active { background: #8b5cf6; }
+        body.theme-purple #addBtn { background: #8b5cf6; }
+        body.theme-purple .tab-btn.active { background: #8b5cf6; }
         
-        /* Розовая тема */
         body.theme-rose {
             background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 100%);
             color: #9d174d;
         }
-        
         body.theme-rose header { background: #ec4899; }
-        body.theme-rose h1 { color: white; }
-        body.theme-rose #addBtn { background: #ec4899; color: white; }
-        body.theme-rose .stats,
-        body.theme-rose .task-list,
-        body.theme-rose .date-btn { background: #fdf2f8; }
-        body.theme-rose .date-btn.active { background: #ec4899; color: white; }
+        body.theme-rose .date-btn.active { background: #ec4899; }
+        body.theme-rose #addBtn { background: #ec4899; }
+        body.theme-rose .tab-btn.active { background: #ec4899; }
         
+        /* Контейнер */
         .app-container {
-            max-width: 800px;
+            max-width: 700px;
             margin: 0 auto;
+            width: 100%;
         }
         
+        /* Шапка */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 20px;
+            padding: 10px 16px;
             border-radius: 50px;
             margin-bottom: 20px;
             color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .profile-section {
             display: flex;
             align-items: center;
-            gap: 10px;
-            cursor: pointer;
+            gap: 8px;
             background: rgba(255,255,255,0.2);
             padding: 5px 12px 5px 8px;
             border-radius: 40px;
+            cursor: pointer;
             transition: 0.2s;
         }
+        .profile-section:active { transform: scale(0.97); }
         
         .profile-avatar {
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             overflow: hidden;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-name {
+            font-size: 0.8rem;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
         }
         
         .settings-btn {
             background: rgba(255,255,255,0.2);
             border: none;
-            font-size: 1.3rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
+            font-size: 1.2rem;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
+            cursor: pointer;
             color: white;
         }
         
-        h1 {
-            font-size: 1.3rem;
-            letter-spacing: 1px;
-            font-weight: 600;
+        .level-badge {
+            background: #ffb703;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #1e293b;
+            cursor: pointer;
         }
         
+        /* Статистика */
         .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 10px;
             background: white;
-            border-radius: 30px;
-            padding: 15px;
+            border-radius: 20px;
+            padding: 12px;
             margin-bottom: 20px;
             text-align: center;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         
-        .stats div { padding: 5px; border-radius: 20px; }
+        .stats div {
+            background: #f0fdfa;
+            border-radius: 16px;
+            padding: 8px 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
         
+        .stats div span {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        
+        /* Фильтры */
         .date-filter {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 20px;
         }
         
@@ -316,75 +195,135 @@
             flex: 1;
             background: white;
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 40px;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: 0.2s;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            color: #1e293b;
+            transition: 0.2s;
         }
         
+        /* Форма добавления */
         .add-task-panel {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
-        .add-task-panel input, .add-task-panel select {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #ccfbf1;
+        .add-task-panel input,
+        .add-task-panel select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ccfbf1;
             border-radius: 30px;
             background: white;
-            font-size: 1rem;
+            font-size: 0.9rem;
             outline: none;
-            transition: 0.2s;
-            color: #1e293b;
+        }
+        
+        .row-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .row-inputs select,
+        .row-inputs input {
+            flex: 1;
         }
         
         #addBtn {
             border: none;
-            padding: 0 25px;
-            border-radius: 40px;
+            padding: 12px;
+            border-radius: 30px;
             font-weight: bold;
+            font-size: 0.95rem;
             cursor: pointer;
-            transition: 0.2s;
             color: white;
+            transition: 0.2s;
         }
+        #addBtn:active { transform: scale(0.97); }
         
+        /* Список задач */
         .task-list {
             background: white;
-            border-radius: 30px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
         }
         
         .task-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
+            gap: 10px;
+            padding: 12px 14px;
             border-bottom: 1px solid #e2e8f0;
-            transition: background 0.2s;
+            flex-wrap: wrap;
         }
         
         .status-select {
             background: #f1f5f9;
             border: none;
             border-radius: 20px;
-            padding: 6px 10px;
-            font-size: 0.75rem;
+            padding: 5px 8px;
+            font-size: 0.7rem;
             cursor: pointer;
         }
         
-        .task-info { flex: 1; }
-        .task-text { font-weight: 600; display: block; margin-bottom: 5px; }
-        .task-meta { display: flex; gap: 12px; font-size: 0.7rem; flex-wrap: wrap; }
-        .category-badge { background: #ccfbf1; padding: 2px 10px; border-radius: 20px; }
-        .delete-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; opacity: 0.5; }
+        .task-info {
+            flex: 1;
+            min-width: 150px;
+        }
         
+        .task-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.65rem;
+            color: #475569;
+        }
+        
+        .category-badge {
+            background: #ccfbf1;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.5;
+            padding: 5px;
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            background: white;
+            border-radius: 20px;
+        }
+        
+        .version {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            font-size: 0.6rem;
+            opacity: 0.5;
+        }
+        
+        /* Модальные окна */
         .modal {
             position: fixed;
             top: 0;
@@ -400,77 +339,22 @@
         
         .modal-content {
             background: white;
-            border-radius: 40px;
-            padding: 25px;
+            border-radius: 28px;
+            padding: 20px;
             width: 90%;
-            max-width: 500px;
+            max-width: 450px;
             max-height: 85vh;
             overflow-y: auto;
         }
         
-        .emoji-panel {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            border-radius: 60px;
-            padding: 12px 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        /* Табы */
+        .tab-buttons {
             display: flex;
-            gap: 12px;
-            z-index: 1001;
+            gap: 8px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            justify-content: center;
-            max-width: 90%;
-            animation: fadeIn 0.3s ease;
         }
         
-        .emoji-panel-option {
-            font-size: 1.8rem;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: 0.2s;
-            background: #f1f5f9;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .close-emoji {
-            background: #ef4444;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        
-        .theme-options {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        
-        .theme-option {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 3px solid transparent;
-            transition: 0.2s;
-        }
-        
-        .theme-teal-bg { background: linear-gradient(135deg, #14b8a6, #0f766e); }
-        .theme-dark-bg { background: linear-gradient(135deg, #1e293b, #0f172a); }
-        .theme-purple-bg { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-        .theme-rose-bg { background: linear-gradient(135deg, #ec4899, #be185d); }
-        
-        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn {
             flex: 1;
             background: #e2e8f0;
@@ -478,32 +362,41 @@
             padding: 10px;
             border-radius: 30px;
             cursor: pointer;
-            font-weight: bold;
-            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: 0.2s;
         }
-        .tab-btn.active { background: #14b8a6; color: white; }
         
-        .tab-content { display: none; }
+        .tab-content {
+            display: none;
+        }
         .tab-content.active { display: block; }
         
-        .levels-container { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+        /* Уровни */
+        .levels-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
         .level-card {
             background: #f8fafc;
-            border-radius: 20px;
-            padding: 15px;
+            border-radius: 16px;
+            padding: 12px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            color: #1e293b;
+            gap: 12px;
         }
         .level-card.current { background: #ccfbf1; border: 2px solid #14b8a6; }
-        .level-icon { font-size: 2rem; }
-        .level-info { flex: 1; text-align: left; }
-        .level-name { font-weight: bold; }
+        .level-icon { font-size: 1.8rem; }
+        .level-info { flex: 1; }
+        .level-name { font-weight: bold; font-size: 0.9rem; }
         
+        /* Факты */
         .fact-card {
-            border-radius: 25px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 15px;
             margin: 15px 0;
             color: white;
         }
@@ -511,541 +404,610 @@
         .fact-card:last-child { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         .fact-image {
             width: 100%;
-            height: 150px;
+            height: 140px;
             object-fit: cover;
-            border-radius: 20px;
+            border-radius: 16px;
             margin: 10px 0;
         }
         
-        .version {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            font-size: 0.7rem;
-            opacity: 0.6;
+        /* Настройки тем */
+        .theme-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
         }
+        .theme-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        .theme-teal-bg { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+        .theme-dark-bg { background: linear-gradient(135deg, #1e293b, #0f172a); }
+        .theme-purple-bg { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .theme-rose-bg { background: linear-gradient(135deg, #ec4899, #be185d); }
         
-        .empty { text-align: center; padding: 40px; color: #64748b; }
-        .slider-container { display: flex; align-items: center; gap: 15px; margin: 20px 0; }
+        /* Оценка задачи */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
         .slider-container input { flex: 1; }
-        .motivation-text { margin: 15px 0; font-style: italic; color: #14b8a6; font-weight: 500; }
+        .motivation-text { text-align: center; margin: 10px 0; color: #14b8a6; font-weight: bold; }
         
-        button, .date-btn, .settings-btn { cursor: pointer; transition: 0.2s; }
-        button:active, .date-btn:active { transform: scale(0.96); }
+        /* Панель эмодзи */
+        .emoji-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 50px;
+            padding: 10px 16px;
+            display: flex;
+            gap: 10px;
+            z-index: 1001;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .emoji-panel-option {
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         
         .profile-stats {
             background: #f0fdfa;
-            padding: 15px;
-            border-radius: 25px;
+            padding: 12px;
+            border-radius: 20px;
             margin: 15px 0;
         }
         
-        input, select, textarea {
-            font-family: inherit;
+        button, .date-btn, .settings-btn, .profile-section, .level-badge {
+            cursor: pointer;
+        }
+        
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .stats { gap: 6px; }
+            .stats div { font-size: 0.65rem; }
+            .task-item { flex-direction: column; align-items: stretch; }
+            .status-select { align-self: flex-start; }
+            .delete-btn { align-self: flex-end; position: relative; top: -30px; }
         }
     </style>
 </head>
 <body class="theme-teal">
-    <div class="splash-screen" id="splashScreen">
-        <div class="splash-content">
-            <div class="splash-icon">📋✨</div>
-            <div class="splash-title">Planifica</div>
-            <div class="splash-text">
-                Приветствуем вас в приложении Planifica!<br>
-                Начните планировать сейчас!
-            </div>
+<div class="app-container">
+    <header>
+        <div class="profile-section" id="profileBtn">
+            <div class="profile-avatar" id="headerAvatar">😎</div>
+            <span class="profile-name" id="headerName">Гость</span>
         </div>
+        <h1>📋 Planifica</h1>
+        <div class="settings-btn" id="settingsBtn">⚙️</div>
+    </header>
+
+    <div class="stats">
+        <div>📊 Всего<br><span id="totalCount">0</span></div>
+        <div>🔄 В процессе<br><span id="progressCount">0</span></div>
+        <div>✅ Выполнено<br><span id="completedCount">0</span></div>
+        <div>⏰ Просрочено<br><span id="overdueCount">0</span></div>
     </div>
 
-    <div class="app-content" style="opacity: 0;">
-        <div class="app-container">
-            <header>
-                <div class="profile-section" id="profileBtn">
-                    <div class="profile-avatar" id="headerAvatar">😎</div>
-                    <span class="profile-name" id="headerName">Гость</span>
-                </div>
-                <h1>📋 Planifica</h1>
-                <div class="settings-btn" id="settingsBtn">⚙️</div>
-            </header>
-
-            <div class="stats">
-                <div>📊 Всего: <span id="totalCount">0</span></div>
-                <div>🔄 В процессе: <span id="progressCount">0</span></div>
-                <div>✅ Выполнено: <span id="completedCount">0</span></div>
-                <div>⏰ Просрочено: <span id="overdueCount">0</span></div>
-            </div>
-
-            <div class="date-filter">
-                <button id="todayBtn" class="date-btn active">📅 Сегодня</button>
-                <button id="archiveBtn" class="date-btn">📦 Архив</button>
-            </div>
-
-            <div class="add-task-panel">
-                <input type="text" id="taskInput" placeholder="Что нужно сделать?">
-                <select id="categorySelect">
-                    <option value="work">💼 Работа</option>
-                    <option value="personal">🏠 Личное</option>
-                    <option value="study">📚 Учёба</option>
-                </select>
-                <input type="datetime-local" id="deadlineInput">
-                <button id="addBtn">+ Добавить</button>
-            </div>
-
-            <div class="task-list" id="taskList">
-                <div class="empty">✨ Добавьте первую задачу на сегодня</div>
-            </div>
-            
-            <div class="version">
-                Planifica v2.0 | Цифровой помощник для ваших задач<br>
-                By product NeverAgainBack
-            </div>
-        </div>
+    <div class="date-filter">
+        <button id="todayBtn" class="date-btn active">📅 Сегодня</button>
+        <button id="archiveBtn" class="date-btn">📦 Архив</button>
     </div>
 
-    <!-- Модалка оценки -->
-    <div id="ratingModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>🎯 Как вам было выполнять задачу?</h3>
-            <div class="slider-container">
-                <span style="font-size: 1.5rem;">😊</span>
-                <input type="range" id="difficultySlider" min="1" max="3" step="1" value="2">
-                <span style="font-size: 1.5rem;">😟</span>
-            </div>
-            <div id="sliderEmoji" style="font-size: 3rem; text-align: center;">😐</div>
-            <div id="motivationMessage" class="motivation-text"></div>
-            <button id="submitRating">✨ Отлично! ✨</button>
+    <div class="add-task-panel">
+        <input type="text" id="taskInput" placeholder="Что нужно сделать?">
+        <div class="row-inputs">
+            <select id="categorySelect">
+                <option value="work">💼 Работа</option>
+                <option value="personal">🏠 Личное</option>
+                <option value="study">📚 Учёба</option>
+            </select>
+            <input type="datetime-local" id="deadlineInput">
         </div>
+        <button id="addBtn">+ Добавить</button>
     </div>
 
-    <!-- Модалка профиля -->
-    <div id="profileModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>👤 Мой профиль</h2>
-            
-            <div class="tab-buttons">
-                <button class="tab-btn active" data-tab="profile">📝 Профиль</button>
-                <button class="tab-btn" data-tab="levels">🏆 Уровни</button>
-                <button class="tab-btn" data-tab="facts">🌟 Факты дня</button>
+    <div class="task-list" id="taskList">
+        <div class="empty">✨ Добавьте первую задачу на сегодня</div>
+    </div>
+    
+    <div class="version">
+        Planifica v2.0 | By product NeverAgainBack
+    </div>
+</div>
+
+<!-- Модальное окно настроек -->
+<div id="settingsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>⚙️ Настройки</h2>
+        <h3>🎨 Цветовая тема</h3>
+        <div class="theme-options">
+            <div class="theme-option theme-teal-bg" data-theme="teal" title="Бирюзовая"></div>
+            <div class="theme-option theme-dark-bg" data-theme="dark" title="Тёмная"></div>
+            <div class="theme-option theme-purple-bg" data-theme="purple" title="Фиолетовая"></div>
+            <div class="theme-option theme-rose-bg" data-theme="rose" title="Розовая"></div>
+        </div>
+        <button id="closeSettings" style="margin-top: 15px; background: #14b8a6; color: white; border: none; padding: 10px 20px; border-radius: 30px;">Закрыть</button>
+    </div>
+</div>
+
+<!-- Модальное окно профиля -->
+<div id="profileModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>👤 Мой профиль</h2>
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="profile">📝 Профиль</button>
+            <button class="tab-btn" data-tab="levels">🏆 Уровни</button>
+            <button class="tab-btn" data-tab="facts">🌟 Факты дня</button>
+        </div>
+        
+        <div id="tabProfile" class="tab-content active">
+            <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+                <div id="avatarPreview" style="font-size: 3rem; width: 70px; height: 70px; background: #f0fdfa; border-radius: 50%; display: flex; align-items: center; justify-content: center;">😎</div>
+                <button id="openEmojiBtn" style="padding: 8px 16px; background: #e2e8f0; border: none; border-radius: 30px;">😊 Выбрать смайлик</button>
             </div>
-            
-            <div id="tabProfile" class="tab-content active">
-                <div class="avatar-section" style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
-                    <div id="avatarPreview" style="font-size: 3rem; width: 70px; height: 70px; background: #f0fdfa; border-radius: 50%; display: flex; align-items: center; justify-content: center;">😎</div>
-                    <button id="openEmojiBtn" style="padding: 8px 16px;">😊 Выбрать смайлик</button>
-                </div>
-                <input type="text" id="userName" placeholder="Ваше имя" style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 30px; border: 1px solid #e2e8f0;">
-                <select id="userGender" style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 30px;">
-                    <option value="male">👨 Мужской</option>
-                    <option value="female">👩 Женский</option>
-                    <option value="other">🌈 Другой</option>
-                </select>
-                <textarea id="userGoal" rows="3" placeholder="Ваша цель..." style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 20px;"></textarea>
-                
-                <div class="profile-stats">
-                    <p>📈 Выполнено задач: <span id="profileCompleted">0</span></p>
-                    <p>🏆 Текущий уровень: <span id="profileLevel">Новичок</span></p>
-                    <p>⭐ До следующего уровня: <span id="nextLevelTasks">100</span> задач</p>
-                </div>
-                
-                <button id="saveProfile">💾 Сохранить</button>
-                <button id="closeProfile" class="close-btn">🔒 Закрыть</button>
+            <input type="text" id="userName" placeholder="Ваше имя" style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 30px; border: 1px solid #ddd;">
+            <select id="userGender" style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 30px;">
+                <option value="male">👨 Мужской</option>
+                <option value="female">👩 Женский</option>
+                <option value="other">🌈 Другой</option>
+            </select>
+            <textarea id="userGoal" rows="3" placeholder="Ваша цель..." style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 20px;"></textarea>
+            <div class="profile-stats">
+                <p>📈 Выполнено задач: <span id="profileCompleted">0</span></p>
+                <p>🏆 Текущий уровень: <span id="profileLevel">Новичок</span></p>
+                <p>⭐ До следующего уровня: <span id="nextLevelTasks">100</span> задач</p>
             </div>
-            
-            <div id="tabLevels" class="tab-content">
-                <div class="levels-container" id="levelsContainer"></div>
-            </div>
-            
-            <div id="tabFacts" class="tab-content">
-                <div id="factOfTheDay" class="fact-card"></div>
-                <div id="scienceFact" class="fact-card"></div>
-            </div>
+            <button id="saveProfile" style="background: #14b8a6; color: white; border: none; padding: 12px; border-radius: 30px; width: 100%;">💾 Сохранить</button>
+            <button id="closeProfile" style="margin-top: 10px; background: #94a3b8; color: white; border: none; padding: 12px; border-radius: 30px; width: 100%;">🔒 Закрыть</button>
+        </div>
+        
+        <div id="tabLevels" class="tab-content">
+            <div class="levels-container" id="levelsContainer"></div>
+        </div>
+        
+        <div id="tabFacts" class="tab-content">
+            <div id="factOfTheDay" class="fact-card"></div>
+            <div id="scienceFact" class="fact-card"></div>
         </div>
     </div>
+</div>
 
-    <!-- Модалка настроек -->
-    <div id="settingsModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>⚙️ Настройки</h2>
-            <h3>🎨 Цветовая тема</h3>
-            <div class="theme-options">
-                <div class="theme-option theme-teal-bg" data-theme="teal" title="Бирюзовая"></div>
-                <div class="theme-option theme-dark-bg" data-theme="dark" title="Тёмная"></div>
-                <div class="theme-option theme-purple-bg" data-theme="purple" title="Фиолетовая"></div>
-                <div class="theme-option theme-rose-bg" data-theme="rose" title="Розовая"></div>
-            </div>
-            <button id="closeSettings">Закрыть</button>
+<!-- Модальное окно оценки задачи -->
+<div id="ratingModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3>🎯 Как вам было выполнять задачу?</h3>
+        <div class="slider-container">
+            <span style="font-size: 1.5rem;">😊</span>
+            <input type="range" id="difficultySlider" min="1" max="3" step="1" value="2">
+            <span style="font-size: 1.5rem;">😟</span>
         </div>
+        <div id="sliderEmoji" style="font-size: 2rem; text-align: center;">😐</div>
+        <div id="motivationMessage" class="motivation-text"></div>
+        <button id="submitRating" style="background: #14b8a6; color: white; border: none; padding: 12px; border-radius: 30px; width: 100%;">✨ Отлично! ✨</button>
     </div>
+</div>
 
-    <script>
-        (function() {
-            let tasks = [];
-            let currentView = 'today';
-            let currentRatingTaskId = null;
-            
-            let userProfile = {
-                name: '',
-                gender: 'male',
-                avatar: '😎',
-                goal: '',
-                totalCompleted: 0
-            };
-            
-            const levels = [
-                { name: '⭐ Новичок', min: 0, icon: '🌱', desc: 'Первый шаг' },
-                { name: '📌 Организатор', min: 100, icon: '📋', desc: 'Вы уже умеете планировать' },
-                { name: '🏅 Мастер планов', min: 200, icon: '🎯', desc: 'Планирование — ваш стиль' },
-                { name: '⏱️ Эксперт', min: 300, icon: '⏰', desc: 'Время под контролем' },
-                { name: '🏆 Легенда', min: 400, icon: '👑', desc: 'Вы достигли совершенства!' }
-            ];
-            
-            const achievements = [
-                { title: '🚀 Первый полёт в космос', date: '12 апреля 1961', text: 'Юрий Гагарин на корабле "Восток-1" совершил первый орбитальный полёт вокруг Земли.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Yuri_Gagarin_%28cropped%29.jpg/200px-Yuri_Gagarin_%28cropped%29.jpg' },
-                { title: '🌕 Высадка на Луну', date: '20 июля 1969', text: 'Нил Армстронг и Базз Олдрин стали первыми людьми на Луне.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/As11-40-5878_-_GPN-2001-000009.jpg/300px-As11-40-5878_-_GPN-2001-000009.jpg' },
-                { title: '💻 Создание Интернета', date: '1 января 1983', text: 'Переход на TCP/IP считается днём рождения современного интернета.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/First_Web_Server.jpg/250px-First_Web_Server.jpg' }
-            ];
-            
-            const scienceFacts = [
-                { title: '🧠 О мозге', text: 'Человеческий мозг генерирует около 20 ватт электроэнергии — достаточно для лампочки!', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Brain_human_normal_inferior_view.svg/200px-Brain_human_normal_inferior_view.svg.png' },
-                { title: '🌍 Космос', text: 'Самый большой вулкан в Солнечной системе — Олимп на Марсе, в 3 раза выше Эвереста!', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Olympus_Mons_altitude.jpg/250px-Olympus_Mons_altitude.jpg' }
-            ];
-            
-            function getTodayStr() {
-                return new Date().toISOString().split('T')[0];
-            }
-            
-            function getUserLevelIndex() {
-                for (let i = levels.length-1; i >= 0; i--) {
-                    if (userProfile.totalCompleted >= levels[i].min) return i;
-                }
-                return 0;
-            }
-            
-            function loadTasks() {
-                const saved = localStorage.getItem('planifica_tasks');
-                if (saved) {
-                    tasks = JSON.parse(saved);
-                    tasks = tasks.map(t => ({ ...t, status: t.status || 'new', dateCreated: t.dateCreated || getTodayStr() }));
-                }
-                updateStats();
-            }
-            
-            function saveTasks() {
-                localStorage.setItem('planifica_tasks', JSON.stringify(tasks));
-                updateStats();
-                updateProfileStats();
-                renderTasks();
-            }
-            
-            function loadProfile() {
-                const saved = localStorage.getItem('planifica_profile');
-                if (saved) userProfile = JSON.parse(saved);
-                updateHeaderUI();
-            }
-            
-            function saveProfile() {
-                localStorage.setItem('planifica_profile', JSON.stringify(userProfile));
-                updateHeaderUI();
-            }
-            
-            function loadTheme() {
-                const savedTheme = localStorage.getItem('planifica_theme') || 'teal';
-                document.body.className = `theme-${savedTheme}`;
-            }
-            
-            function saveTheme(theme) {
-                localStorage.setItem('planifica_theme', theme);
-                document.body.className = `theme-${theme}`;
-            }
-            
-            function updateHeaderUI() {
-                const avatar = document.getElementById('headerAvatar');
-                if (avatar) avatar.innerHTML = userProfile.avatar || '😎';
-                const nameSpan = document.getElementById('headerName');
-                if (nameSpan) nameSpan.innerText = userProfile.name || 'Гость';
-            }
-            
-            function updateStats() {
-                const todayStr = getTodayStr();
-                const todayTasks = tasks.filter(t => t.dateCreated === todayStr);
-                document.getElementById('totalCount').innerText = todayTasks.length;
-                document.getElementById('progressCount').innerText = todayTasks.filter(t => t.status === 'progress').length;
-                document.getElementById('completedCount').innerText = todayTasks.filter(t => t.status === 'done').length;
-                document.getElementById('overdueCount').innerText = todayTasks.filter(t => t.status !== 'done' && t.deadline && new Date(t.deadline) < new Date()).length;
-            }
-            
-            function updateProfileStats() {
-                const completed = tasks.filter(t => t.status === 'done').length;
-                userProfile.totalCompleted = completed;
-                saveProfile();
-                const levelIdx = getUserLevelIndex();
-                document.getElementById('profileCompleted').innerText = completed;
-                document.getElementById('profileLevel').innerText = levels[levelIdx].name;
-                const next = levelIdx+1 < levels.length ? levels[levelIdx+1].min - completed : 0;
-                document.getElementById('nextLevelTasks').innerText = next > 0 ? next : 'Максимум!';
-            }
-            
-            function addTask() {
-                const input = document.getElementById('taskInput');
-                const text = input.value.trim();
-                if (!text) return;
-                
-                tasks.push({
-                    id: Date.now(),
-                    text: text,
-                    category: document.getElementById('categorySelect').value,
-                    deadline: document.getElementById('deadlineInput').value || null,
-                    status: 'new',
-                    dateCreated: getTodayStr(),
-                    completedDate: null,
-                    rating: null
-                });
-                saveTasks();
-                renderTasks();
-                input.value = '';
-                document.getElementById('deadlineInput').value = '';
-            }
-            
-            function updateTaskStatus(id, newStatus) {
-                const task = tasks.find(t => t.id == id);
-                if (!task) return;
-                
-                if (newStatus === 'done' && task.status !== 'done') {
-                    task.completedDate = new Date().toISOString();
-                    currentRatingTaskId = id;
-                    document.getElementById('ratingModal').style.display = 'flex';
-                    task.status = 'done';
-                } else {
-                    task.status = newStatus;
-                }
-                saveTasks();
-                renderTasks();
-            }
-            
-            function deleteTask(id) {
-                if (confirm('Удалить задачу?')) {
-                    tasks = tasks.filter(t => t.id != id);
-                    saveTasks();
-                    renderTasks();
-                }
-            }
-            
-            function submitRating(difficulty) {
-                if (!currentRatingTaskId) return;
-                const task = tasks.find(t => t.id == currentRatingTaskId);
-                if (task) {
-                    task.rating = difficulty;
-                    saveTasks();
-                    userProfile.totalCompleted = tasks.filter(t => t.status === 'done').length;
-                    saveProfile();
-                    updateProfileStats();
-                    renderTasks();
-                    
-                    let msg = difficulty == 1 ? '🎉 Вы большой молодец! Продолжайте!' : 
-                              (difficulty == 2 ? '😊 Хорошая работа! Так держать!' : 
-                              '💪 Было сложно, но вы справились! Вы сильнее, чем кажется!');
-                    document.getElementById('motivationMessage').innerText = msg;
-                    setTimeout(() => {
-                        document.getElementById('ratingModal').style.display = 'none';
-                        currentRatingTaskId = null;
-                    }, 2000);
-                }
-            }
-            
-            function renderTasks() {
-                const todayStr = getTodayStr();
-                let filtered = currentView === 'today' ? tasks.filter(t => t.dateCreated === todayStr) : tasks.filter(t => t.dateCreated !== todayStr);
-                const container = document.getElementById('taskList');
-                
-                if (filtered.length === 0) {
-                    container.innerHTML = '<div class="empty">✨ Нет задач в этом разделе</div>';
-                    return;
-                }
-                
-                container.innerHTML = '';
-                filtered.forEach(task => {
-                    const div = document.createElement('div');
-                    div.className = 'task-item';
-                    
-                    const statusSelect = document.createElement('select');
-                    statusSelect.className = 'status-select';
-                    statusSelect.innerHTML = `<option value="new" ${task.status === 'new' ? 'selected' : ''}>⚪ Не начато</option>
-                        <option value="progress" ${task.status === 'progress' ? 'selected' : ''}>🔄 В процессе</option>
-                        <option value="done" ${task.status === 'done' ? 'selected' : ''}>✅ Выполнено</option>`;
-                    statusSelect.onchange = (e) => updateTaskStatus(task.id, e.target.value);
-                    
-                    const catNames = { work: '💼 Работа', personal: '🏠 Личное', study: '📚 Учёба' };
-                    const infoDiv = document.createElement('div');
-                    infoDiv.className = 'task-info';
-                    infoDiv.innerHTML = `<span class="task-text">${escapeHtml(task.text)}</span>
-                        <div class="task-meta"><span class="category-badge">${catNames[task.category]}</span>
-                        ${task.deadline ? `<span>⏰ ${new Date(task.deadline).toLocaleString()}</span>` : ''}
-                        ${task.completedDate && currentView === 'archive' ? `<span>✅ Выполнено: ${new Date(task.completedDate).toLocaleDateString()}</span>` : ''}</div>`;
-                    
-                    const delBtn = document.createElement('button');
-                    delBtn.innerText = '🗑';
-                    delBtn.className = 'delete-btn';
-                    delBtn.onclick = () => deleteTask(task.id);
-                    
-                    div.appendChild(statusSelect);
-                    div.appendChild(infoDiv);
-                    div.appendChild(delBtn);
-                    container.appendChild(div);
-                });
-            }
-            
-            function escapeHtml(str) {
-                return str.replace(/[&<>]/g, function(m) {
-                    if (m === '&') return '&amp;';
-                    if (m === '<') return '&lt;';
-                    if (m === '>') return '&gt;';
-                    return m;
-                });
-            }
-            
-            function renderLevels() {
-                const container = document.getElementById('levelsContainer');
-                if (!container) return;
-                const currentIdx = getUserLevelIndex();
-                container.innerHTML = '';
-                levels.forEach((level, idx) => {
-                    container.innerHTML += `<div class="level-card ${idx === currentIdx ? 'current' : ''}">
-                        <div class="level-icon">${level.icon}</div>
-                        <div class="level-info"><div class="level-name">${level.name}</div><div>${level.desc}</div><div>✅ ${level.min} задач</div></div>
-                        <div>${userProfile.totalCompleted >= level.min ? '✅' : '🔒'}</div></div>`;
-                });
-            }
-            
-            function renderFacts() {
-                const factContainer = document.getElementById('factOfTheDay');
-                const scienceContainer = document.getElementById('scienceFact');
-                if (factContainer) {
-                    const fact = achievements[Math.floor(Math.random() * achievements.length)];
-                    factContainer.innerHTML = `<div class="fact-title">📅 ${fact.title}</div><div class="fact-date">${fact.date}</div>
-                        <img class="fact-image" src="${fact.image}" onerror="this.style.display='none'"><div class="fact-text">${fact.text}</div>`;
-                }
-                if (scienceContainer) {
-                    const sf = scienceFacts[Math.floor(Math.random() * scienceFacts.length)];
-                    scienceContainer.innerHTML = `<div class="fact-title">🔬 ${sf.title}</div>
-                        <img class="fact-image" src="${sf.image}" onerror="this.style.display='none'"><div class="fact-text">${sf.text}</div>`;
-                }
-            }
-            
-            let emojiPanel = null;
-            const emojis = ['😎', '🐱', '🌟', '🎓', '💼', '🏆', '🌈', '🦊', '🐼', '⭐', '🎨', '🚀', '❤️', '💪', '🔥', '✨'];
-            
-            function showEmojiPanel() {
-                if (emojiPanel) emojiPanel.remove();
-                emojiPanel = document.createElement('div');
-                emojiPanel.className = 'emoji-panel';
-                emojis.forEach(emoji => {
-                    const option = document.createElement('div');
-                    option.className = 'emoji-panel-option';
-                    option.innerText = emoji;
-                    option.onclick = () => {
-                        userProfile.avatar = emoji;
-                        saveProfile();
-                        updateHeaderUI();
-                        const preview = document.getElementById('avatarPreview');
-                        if (preview) preview.innerText = emoji;
-                        emojiPanel.remove();
-                        emojiPanel = null;
-                    };
-                    emojiPanel.appendChild(option);
-                });
-                const closeBtn = document.createElement('div');
-                closeBtn.className = 'close-emoji';
-                closeBtn.innerText = '✖️ Закрыть';
-                closeBtn.onclick = () => { emojiPanel.remove(); emojiPanel = null; };
-                emojiPanel.appendChild(closeBtn);
-                document.body.appendChild(emojiPanel);
-            }
-            
-            function setupEventListeners() {
-                document.getElementById('addBtn').onclick = addTask;
-                document.getElementById('taskInput').onkeypress = (e) => { if (e.key === 'Enter') addTask(); };
-                document.getElementById('todayBtn').onclick = () => {
-                    currentView = 'today';
-                    document.getElementById('todayBtn').classList.add('active');
-                    document.getElementById('archiveBtn').classList.remove('active');
-                    renderTasks();
-                };
-                document.getElementById('archiveBtn').onclick = () => {
-                    currentView = 'archive';
-                    document.getElementById('archiveBtn').classList.add('active');
-                    document.getElementById('todayBtn').classList.remove('active');
-                    renderTasks();
-                };
-                document.getElementById('profileBtn').onclick = () => {
-                    updateProfileStats();
-                    renderLevels();
-                    renderFacts();
-                    document.getElementById('profileModal').style.display = 'flex';
-                };
-                document.getElementById('settingsBtn').onclick = () => {
-                    document.getElementById('settingsModal').style.display = 'flex';
-                };
-                document.getElementById('saveProfile').onclick = () => {
-                    userProfile.name = document.getElementById('userName').value;
-                    userProfile.gender = document.getElementById('userGender').value;
-                    userProfile.goal = document.getElementById('userGoal').value;
-                    saveProfile();
-                    document.getElementById('profileModal').style.display = 'none';
-                };
-                document.getElementById('closeProfile').onclick = () => {
-                    document.getElementById('profileModal').style.display = 'none';
-                };
-                document.getElementById('openEmojiBtn').onclick = showEmojiPanel;
-                document.getElementById('closeSettings').onclick = () => {
-                    document.getElementById('settingsModal').style.display = 'none';
-                };
-                document.querySelectorAll('.theme-option').forEach(opt => {
-                    opt.onclick = () => {
-                        const theme = opt.dataset.theme;
-                        saveTheme(theme);
-                    };
-                });
-                document.querySelectorAll('.tab-btn').forEach(btn => {
-                    btn.onclick = () => {
-                        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                        if (btn.innerText.includes('Профиль')) document.getElementById('tabProfile').classList.add('active');
-                        else if (btn.innerText.includes('Уровни')) { document.getElementById('tabLevels').classList.add('active'); renderLevels(); }
-                        else if (btn.innerText.includes('Факты')) { document.getElementById('tabFacts').classList.add('active'); renderFacts(); }
-                    };
-                });
-                document.getElementById('submitRating').onclick = () => {
-                    const diff = parseInt(document.getElementById('difficultySlider').value);
-                    submitRating(diff);
-                };
-                const slider = document.getElementById('difficultySlider');
-                if (slider) {
-                    slider.oninput = () => {
-                        const val = parseInt(slider.value);
-                        document.getElementById('sliderEmoji').innerText = val === 1 ? '😊 Легко' : (val === 2 ? '😐 Средне' : '😟 Тяжело');
-                    };
-                }
-                window.onclick = (e) => {
-                    if (e.target.classList && e.target.classList.contains('modal')) {
-                        e.target.style.display = 'none';
-                    }
-                };
-            }
-            
-            loadTheme();
-            loadProfile();
-            loadTasks();
-            setupEventListeners();
+<script>
+(function() {
+    // ==================== ДАННЫЕ ====================
+    let tasks = [];
+    let currentView = 'today';
+    let currentRatingTaskId = null;
+    
+    let userProfile = {
+        name: '',
+        gender: 'male',
+        avatar: '😎',
+        goal: '',
+        totalCompleted: 0
+    };
+    
+    const levels = [
+        { name: '⭐ Новичок', min: 0, icon: '🌱', desc: 'Первый шаг' },
+        { name: '📌 Организатор', min: 100, icon: '📋', desc: 'Вы уже умеете планировать' },
+        { name: '🏅 Мастер планов', min: 200, icon: '🎯', desc: 'Планирование — ваш стиль' },
+        { name: '⏱️ Эксперт пунктуальности', min: 300, icon: '⏰', desc: 'Время под контролем' },
+        { name: '🏆 Легенда продуктивности', min: 400, icon: '👑', desc: 'Вы достигли совершенства!' }
+    ];
+    
+    const achievements = [
+        { title: '🚀 Первый полёт в космос', date: '12 апреля 1961', text: 'Юрий Гагарин на корабле "Восток-1" совершил первый орбитальный полёт вокруг Земли.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Yuri_Gagarin_%28cropped%29.jpg/200px-Yuri_Gagarin_%28cropped%29.jpg' },
+        { title: '🌕 Высадка на Луну', date: '20 июля 1969', text: 'Нил Армстронг и Базз Олдрин стали первыми людьми на Луне.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/As11-40-5878_-_GPN-2001-000009.jpg/300px-As11-40-5878_-_GPN-2001-000009.jpg' }
+    ];
+    
+    const scienceFacts = [
+        { title: '🧠 О мозге', text: 'Человеческий мозг генерирует около 20 ватт электроэнергии — достаточно для лампочки!', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Brain_human_normal_inferior_view.svg/200px-Brain_human_normal_inferior_view.svg.png' }
+    ];
+    
+    // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
+    function getTodayStr() {
+        return new Date().toISOString().split('T')[0];
+    }
+    
+    function getUserLevelIndex() {
+        for (let i = levels.length-1; i >= 0; i--) {
+            if (userProfile.totalCompleted >= levels[i].min) return i;
+        }
+        return 0;
+    }
+    
+    function updateHeaderUI() {
+        const avatar = document.getElementById('headerAvatar');
+        if (avatar) avatar.innerHTML = userProfile.avatar || '😎';
+        const nameSpan = document.getElementById('headerName');
+        if (nameSpan) nameSpan.innerText = userProfile.name || 'Гость';
+        const levelIdx = getUserLevelIndex();
+        const badge = document.getElementById('levelBadge');
+        if (badge) badge.innerText = levels[levelIdx].name;
+    }
+    
+    // ==================== ЗАГРУЗКА/СОХРАНЕНИЕ ====================
+    function loadTasks() {
+        const saved = localStorage.getItem('planifica_tasks');
+        if (saved) {
+            tasks = JSON.parse(saved);
+            tasks = tasks.map(t => ({ ...t, status: t.status || 'new', dateCreated: t.dateCreated || getTodayStr() }));
+        }
+        updateStats();
+    }
+    
+    function saveTasks() {
+        localStorage.setItem('planifica_tasks', JSON.stringify(tasks));
+        updateStats();
+        updateProfileStats();
+        renderTasks();
+    }
+    
+    function loadProfile() {
+        const saved = localStorage.getItem('planifica_profile');
+        if (saved) userProfile = JSON.parse(saved);
+        updateHeaderUI();
+        updateProfileUI();
+    }
+    
+    function saveProfile() {
+        localStorage.setItem('planifica_profile', JSON.stringify(userProfile));
+        updateHeaderUI();
+    }
+    
+    function loadTheme() {
+        const saved = localStorage.getItem('planifica_theme') || 'teal';
+        document.body.className = `theme-${saved}`;
+    }
+    
+    function saveTheme(theme) {
+        localStorage.setItem('planifica_theme', theme);
+        document.body.className = `theme-${theme}`;
+    }
+    
+    // ==================== СТАТИСТИКА ====================
+    function updateStats() {
+        const todayStr = getTodayStr();
+        const todayTasks = tasks.filter(t => t.dateCreated === todayStr);
+        document.getElementById('totalCount').innerText = todayTasks.length;
+        document.getElementById('progressCount').innerText = todayTasks.filter(t => t.status === 'progress').length;
+        document.getElementById('completedCount').innerText = todayTasks.filter(t => t.status === 'done').length;
+        document.getElementById('overdueCount').innerText = todayTasks.filter(t => t.status !== 'done' && t.deadline && new Date(t.deadline) < new Date()).length;
+    }
+    
+    function updateProfileStats() {
+        const completed = tasks.filter(t => t.status === 'done').length;
+        userProfile.totalCompleted = completed;
+        saveProfile();
+        const levelIdx = getUserLevelIndex();
+        const profileCompleted = document.getElementById('profileCompleted');
+        if (profileCompleted) profileCompleted.innerText = completed;
+        const profileLevel = document.getElementById('profileLevel');
+        if (profileLevel) profileLevel.innerText = levels[levelIdx].name;
+        const next = levelIdx+1 < levels.length ? levels[levelIdx+1].min - completed : 0;
+        const nextSpan = document.getElementById('nextLevelTasks');
+        if (nextSpan) nextSpan.innerText = next > 0 ? next : '🏆 Достигнут максимум!';
+    }
+    
+    function updateProfileUI() {
+        const preview = document.getElementById('avatarPreview');
+        if (preview) preview.innerText = userProfile.avatar || '😎';
+        const userName = document.getElementById('userName');
+        if (userName) userName.value = userProfile.name || '';
+        const userGender = document.getElementById('userGender');
+        if (userGender) userGender.value = userProfile.gender || 'male';
+        const userGoal = document.getElementById('userGoal');
+        if (userGoal) userGoal.value = userProfile.goal || '';
+    }
+    
+    // ==================== ЗАДАЧИ ====================
+    function addTask() {
+        const input = document.getElementById('taskInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        tasks.push({
+            id: Date.now(),
+            text: text,
+            category: document.getElementById('categorySelect').value,
+            deadline: document.getElementById('deadlineInput').value || null,
+            status: 'new',
+            dateCreated: getTodayStr(),
+            completedDate: null,
+            rating: null
+        });
+        saveTasks();
+        renderTasks();
+        input.value = '';
+        document.getElementById('deadlineInput').value = '';
+    }
+    
+    function updateTaskStatus(id, newStatus) {
+        const task = tasks.find(t => t.id == id);
+        if (!task) return;
+        
+        if (newStatus === 'done' && task.status !== 'done') {
+            task.completedDate = new Date().toISOString();
+            currentRatingTaskId = id;
+            document.getElementById('ratingModal').style.display = 'flex';
+            task.status = 'done';
+        } else {
+            task.status = newStatus;
+        }
+        saveTasks();
+        renderTasks();
+    }
+    
+    function deleteTask(id) {
+        if (confirm('Удалить задачу?')) {
+            tasks = tasks.filter(t => t.id != id);
+            saveTasks();
             renderTasks();
+        }
+    }
+    
+    function submitRating(difficulty) {
+        if (!currentRatingTaskId) return;
+        const task = tasks.find(t => t.id == currentRatingTaskId);
+        if (task) {
+            task.rating = difficulty;
+            saveTasks();
+            userProfile.totalCompleted = tasks.filter(t => t.status === 'done').length;
+            saveProfile();
             updateProfileStats();
+            renderTasks();
             
+            let msg = difficulty == 1 ? '🎉 Вы большой молодец! Продолжайте!' : 
+                      (difficulty == 2 ? '😊 Хорошая работа! Так держать!' : 
+                      '💪 Было сложно, но вы справились! Вы сильнее, чем кажется!');
+            document.getElementById('motivationMessage').innerText = msg;
             setTimeout(() => {
-                const splash = document.getElementById('splashScreen');
-                if (splash) splash.style.display = 'none';
-                document.querySelector('.app-content').style.opacity = '1';
-            }, 4000);
-        })();
-    </script>
+                document.getElementById('ratingModal').style.display = 'none';
+                currentRatingTaskId = null;
+            }, 2000);
+        }
+    }
+    
+    function renderTasks() {
+        const todayStr = getTodayStr();
+        let filtered = currentView === 'today' ? tasks.filter(t => t.dateCreated === todayStr) : tasks.filter(t => t.dateCreated !== todayStr);
+        const container = document.getElementById('taskList');
+        
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="empty">✨ Нет задач в этом разделе</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        filtered.forEach(task => {
+            const div = document.createElement('div');
+            div.className = 'task-item';
+            
+            const statusSelect = document.createElement('select');
+            statusSelect.className = 'status-select';
+            statusSelect.innerHTML = `<option value="new" ${task.status === 'new' ? 'selected' : ''}>⚪ Не начато</option>
+                <option value="progress" ${task.status === 'progress' ? 'selected' : ''}>🔄 В процессе</option>
+                <option value="done" ${task.status === 'done' ? 'selected' : ''}>✅ Выполнено</option>`;
+            statusSelect.onchange = (e) => updateTaskStatus(task.id, e.target.value);
+            
+            const catNames = { work: '💼 Работа', personal: '🏠 Личное', study: '📚 Учёба' };
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'task-info';
+            infoDiv.innerHTML = `<span class="task-text">${escapeHtml(task.text)}</span>
+                <div class="task-meta"><span class="category-badge">${catNames[task.category]}</span>
+                ${task.deadline ? `<span>⏰ ${new Date(task.deadline).toLocaleString()}</span>` : ''}
+                ${task.completedDate && currentView === 'archive' ? `<span>✅ ${new Date(task.completedDate).toLocaleDateString()}</span>` : ''}</div>`;
+            
+            const delBtn = document.createElement('button');
+            delBtn.innerText = '🗑';
+            delBtn.className = 'delete-btn';
+            delBtn.onclick = () => deleteTask(task.id);
+            
+            div.appendChild(statusSelect);
+            div.appendChild(infoDiv);
+            div.appendChild(delBtn);
+            container.appendChild(div);
+        });
+    }
+    
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            return m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;');
+        });
+    }
+    
+    // ==================== УРОВНИ И ФАКТЫ ====================
+    function renderLevels() {
+        const container = document.getElementById('levelsContainer');
+        if (!container) return;
+        const currentIdx = getUserLevelIndex();
+        container.innerHTML = '';
+        levels.forEach((level, idx) => {
+            container.innerHTML += `<div class="level-card ${idx === currentIdx ? 'current' : ''}">
+                <div class="level-icon">${level.icon}</div>
+                <div class="level-info"><div class="level-name">${level.name}</div><div>${level.desc}</div><div>✅ ${level.min} задач</div></div>
+                <div>${userProfile.totalCompleted >= level.min ? '✅' : '🔒'}</div></div>`;
+        });
+    }
+    
+    function renderFacts() {
+        const factContainer = document.getElementById('factOfTheDay');
+        const scienceContainer = document.getElementById('scienceFact');
+        if (factContainer) {
+            const fact = achievements[Math.floor(Math.random() * achievements.length)];
+            factContainer.innerHTML = `<div class="fact-title">📅 ${fact.title}</div><div class="fact-date">${fact.date}</div>
+                <img class="fact-image" src="${fact.image}" onerror="this.style.display='none'"><div class="fact-text">${fact.text}</div>`;
+        }
+        if (scienceContainer) {
+            const sf = scienceFacts[Math.floor(Math.random() * scienceFacts.length)];
+            scienceContainer.innerHTML = `<div class="fact-title">🔬 ${sf.title}</div>
+                <img class="fact-image" src="${sf.image}" onerror="this.style.display='none'"><div class="fact-text">${sf.text}</div>`;
+        }
+    }
+    
+    // ==================== ПАНЕЛЬ ЭМОДЗИ ====================
+    let emojiPanel = null;
+    const emojis = ['😎', '🐱', '🌟', '🎓', '💼', '🏆', '🌈', '🦊', '🐼', '⭐', '🎨', '🚀', '❤️', '💪', '🔥', '✨'];
+    
+    function showEmojiPanel() {
+        if (emojiPanel) emojiPanel.remove();
+        emojiPanel = document.createElement('div');
+        emojiPanel.className = 'emoji-panel';
+        emojis.forEach(emoji => {
+            const option = document.createElement('div');
+            option.className = 'emoji-panel-option';
+            option.innerText = emoji;
+            option.onclick = () => {
+                userProfile.avatar = emoji;
+                saveProfile();
+                updateHeaderUI();
+                const preview = document.getElementById('avatarPreview');
+                if (preview) preview.innerText = emoji;
+                emojiPanel.remove();
+                emojiPanel = null;
+            };
+            emojiPanel.appendChild(option);
+        });
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'close-emoji';
+        closeBtn.innerText = '✖️';
+        closeBtn.style.cssText = 'background:#ef4444; color:white; padding:8px 16px; border-radius:30px; cursor:pointer;';
+        closeBtn.onclick = () => { emojiPanel.remove(); emojiPanel = null; };
+        emojiPanel.appendChild(closeBtn);
+        document.body.appendChild(emojiPanel);
+    }
+    
+    // ==================== НАСТРОЙКА СОБЫТИЙ ====================
+    function setupEventListeners() {
+        document.getElementById('addBtn').onclick = addTask;
+        document.getElementById('taskInput').onkeypress = (e) => { if (e.key === 'Enter') addTask(); };
+        
+        document.getElementById('todayBtn').onclick = () => {
+            currentView = 'today';
+            document.getElementById('todayBtn').classList.add('active');
+            document.getElementById('archiveBtn').classList.remove('active');
+            renderTasks();
+        };
+        document.getElementById('archiveBtn').onclick = () => {
+            currentView = 'archive';
+            document.getElementById('archiveBtn').classList.add('active');
+            document.getElementById('todayBtn').classList.remove('active');
+            renderTasks();
+        };
+        
+        document.getElementById('profileBtn').onclick = () => {
+            updateProfileStats();
+            renderLevels();
+            renderFacts();
+            document.getElementById('profileModal').style.display = 'flex';
+        };
+        
+        document.getElementById('settingsBtn').onclick = () => {
+            document.getElementById('settingsModal').style.display = 'flex';
+        };
+        
+        document.getElementById('closeSettings').onclick = () => {
+            document.getElementById('settingsModal').style.display = 'none';
+        };
+        
+        document.getElementById('saveProfile').onclick = () => {
+            userProfile.name = document.getElementById('userName').value;
+            userProfile.gender = document.getElementById('userGender').value;
+            userProfile.goal = document.getElementById('userGoal').value;
+            saveProfile();
+            updateProfileUI();
+            document.getElementById('profileModal').style.display = 'none';
+        };
+        
+        document.getElementById('closeProfile').onclick = () => {
+            document.getElementById('profileModal').style.display = 'none';
+        };
+        
+        document.getElementById('openEmojiBtn').onclick = showEmojiPanel;
+        
+        document.querySelectorAll('.theme-option').forEach(opt => {
+            opt.onclick = () => {
+                const theme = opt.dataset.theme;
+                saveTheme(theme);
+                document.getElementById('settingsModal').style.display = 'none';
+            };
+        });
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                if (btn.innerText.includes('Профиль')) document.getElementById('tabProfile').classList.add('active');
+                else if (btn.innerText.includes('Уровни')) { document.getElementById('tabLevels').classList.add('active'); renderLevels(); }
+                else if (btn.innerText.includes('Факты')) { document.getElementById('tabFacts').classList.add('active'); renderFacts(); }
+            };
+        });
+        
+        document.getElementById('submitRating').onclick = () => {
+            const diff = parseInt(document.getElementById('difficultySlider').value);
+            submitRating(diff);
+        };
+        
+        const slider = document.getElementById('difficultySlider');
+        if (slider) {
+            slider.oninput = () => {
+                const val = parseInt(slider.value);
+                const emojiSpan = document.getElementById('sliderEmoji');
+                if (emojiSpan) emojiSpan.innerText = val === 1 ? '😊 Легко' : (val === 2 ? '😐 Средне' : '😟 Тяжело');
+            };
+        }
+        
+        window.onclick = (e) => {
+            if (e.target.classList && e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        };
+    }
+    
+    // ==================== ЗАПУСК ====================
+    loadTheme();
+    loadProfile();
+    loadTasks();
+    setupEventListeners();
+    renderTasks();
+    updateProfileStats();
+})();
+</script>
 </body>
 </html>
