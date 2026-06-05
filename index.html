@@ -118,6 +118,8 @@
             justify-content: center;
             cursor: pointer;
             color: white;
+            text-align: center;
+            line-height: 1;
         }
         .stats {
             display: grid;
@@ -563,10 +565,12 @@
                 if (data.userProfile) {
                     userProfile = { ...userProfile, ...data.userProfile };
                     if (!userProfile.gender) userProfile.gender = 'male';
+                    if (!userProfile.avatarData) userProfile.avatarData = '';
                 }
                 updateStatsFromTasks();
             } catch(e) {}
         }
+        // Загрузка темы
         const savedTheme = localStorage.getItem('planifica_theme');
         if (savedTheme === 'dark') {
             document.body.classList.remove('theme-teal');
@@ -767,14 +771,15 @@
 
     function renderProfileTab() {
         const avatarImg = document.getElementById('avatarImg');
+        const avatarPreview = document.getElementById('avatarPreview');
         if (userProfile.avatarData && userProfile.avatarData.startsWith('data:image')) {
             avatarImg.src = userProfile.avatarData;
             avatarImg.style.display = 'block';
-            document.querySelector('#avatarPreview').innerHTML = '';
-            document.querySelector('#avatarPreview').appendChild(avatarImg);
+            avatarPreview.innerHTML = '';
+            avatarPreview.appendChild(avatarImg);
         } else {
             avatarImg.style.display = 'none';
-            document.querySelector('#avatarPreview').innerHTML = '😎';
+            avatarPreview.innerHTML = '😎';
         }
         document.getElementById('userName').value = userProfile.name || '';
         document.getElementById('userGender').value = userProfile.gender;
@@ -803,10 +808,10 @@
 
     function renderLevelsTab() {
         const container = document.getElementById('levelsContainer');
-        const current = getUserLevel();
+        const currentLevelObj = getUserLevel();
         let html = '';
         levels.forEach(level => {
-            const isCurrent = level.name === current.name;
+            const isCurrent = (level.name === currentLevelObj.name);
             html += `
                 <div class="level-card ${isCurrent ? 'current' : ''}">
                     <div><span style="font-size:1.5rem;">${level.icon}</span> ${level.name}</div>
@@ -867,8 +872,10 @@
         });
 
         const settingsModal = document.getElementById('settingsModal');
-        document.getElementById('settingsBtn').addEventListener('click', () => settingsModal.style.display = 'flex');
-        document.getElementById('closeSettings').addEventListener('click', () => settingsModal.style.display = 'none');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const closeSettings = document.getElementById('closeSettings');
+        settingsBtn.addEventListener('click', () => settingsModal.style.display = 'flex');
+        closeSettings.addEventListener('click', () => settingsModal.style.display = 'none');
 
         document.querySelectorAll('.theme-option').forEach(opt => {
             opt.addEventListener('click', () => {
@@ -884,20 +891,23 @@
                 }
                 document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
                 opt.classList.add('active');
-                // перерисовываем факты, чтобы цветовые классы применились
+                // Принудительно перерисовываем факты, чтобы цветовые классы применились
                 renderFactsTab();
             });
         });
 
         const profileModal = document.getElementById('profileModal');
-        document.getElementById('profileBtn').addEventListener('click', () => {
+        const profileBtn = document.getElementById('profileBtn');
+        const closeProfile = document.getElementById('closeProfile');
+        const saveProfile = document.getElementById('saveProfile');
+        profileBtn.addEventListener('click', () => {
             renderProfileTab();
             renderLevelsTab();
             renderFactsTab();
             profileModal.style.display = 'flex';
         });
-        document.getElementById('closeProfile').addEventListener('click', () => profileModal.style.display = 'none');
-        document.getElementById('saveProfile').addEventListener('click', () => {
+        closeProfile.addEventListener('click', () => profileModal.style.display = 'none');
+        saveProfile.addEventListener('click', () => {
             userProfile.name = document.getElementById('userName').value;
             userProfile.gender = document.getElementById('userGender').value;
             userProfile.goal = document.getElementById('userGoal').value;
@@ -939,6 +949,7 @@
         const slider = document.getElementById('difficultySlider');
         const emojiSpan = document.getElementById('sliderEmoji');
         const msgSpan = document.getElementById('motivationMessage');
+        const submitRating = document.getElementById('submitRating');
         slider.addEventListener('input', () => {
             const val = parseInt(slider.value);
             if (val === 1) { emojiSpan.innerText = '😟'; msgSpan.innerText = 'Не расстраивайтесь, в следующий раз будет легче! 💪'; }
@@ -946,7 +957,7 @@
             else { emojiSpan.innerText = '😊'; msgSpan.innerText = 'Отлично! Так держать! 🚀'; }
         });
         slider.dispatchEvent(new Event('input'));
-        document.getElementById('submitRating').addEventListener('click', () => {
+        submitRating.addEventListener('click', () => {
             ratingModal.style.display = 'none';
             currentRatingTaskId = null;
             render();
