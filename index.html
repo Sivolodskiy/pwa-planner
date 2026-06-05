@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planifica</title>
+    <title>Planifica – личный планировщик</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#14b8a6">
     <style>
@@ -13,13 +13,15 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             padding: 20px;
-            transition: background 0.3s, color 0.3s;
+            transition: background 0.3s ease, color 0.2s;
         }
-        /* Бирюзовая тема */
+
+        /* === БИРЮЗОВАЯ ТЕМА (по умолчанию) === */
         body.theme-teal {
             background: linear-gradient(135deg, #ccfbf1 0%, #f0fdfa 100%);
             color: #1e293b;
@@ -29,28 +31,32 @@
         body.theme-teal #addBtn { background: #14b8a6; }
         body.theme-teal .tab-btn.active { background: #14b8a6; }
         body.theme-teal .category-badge { background: #ccfbf1; color: #0f766e; }
-        body.theme-teal .profile-section { background: rgba(255,255,255,0.2); }
-        body.theme-teal .settings-btn { background: rgba(255,255,255,0.2); }
         body.theme-teal .stats div { background: white; color: #1e293b; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         body.theme-teal .task-item { background: white; border-radius: 16px; margin-bottom: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        body.theme-teal .modal-content { background: white; }
+        body.theme-teal .modal-content { background: white; border-radius: 32px; }
         body.theme-teal input, body.theme-teal select, body.theme-teal textarea { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 30px; padding: 12px; }
-        /* Тёмная тема */
+        body.theme-teal .theme-option.active { border-color: #14b8a6; box-shadow: 0 0 0 2px rgba(20,184,166,0.3); }
+        body.theme-teal .level-card { background: white; }
+        body.theme-teal .fact-card { background: white; }
+
+        /* === ТЁМНАЯ ТЕМА === */
         body.theme-dark {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: #e2e8f0;
         }
         body.theme-dark header { background: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-        body.theme-dark .stats div { background: #1e293b; color: #f1f5f9; box-shadow: none; }
+        body.theme-dark .stats div { background: #1e293b; color: #f1f5f9; }
         body.theme-dark .task-item { background: #1e293b; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         body.theme-dark .category-badge { background: #334155; color: #14b8a6; }
         body.theme-dark .date-btn.active { background: #14b8a6; color: #0f172a; }
         body.theme-dark .tab-btn.active { background: #14b8a6; color: #0f172a; }
         body.theme-dark .modal-content { background: #1e293b; color: #e2e8f0; }
         body.theme-dark input, body.theme-dark select, body.theme-dark textarea { background: #334155; border-color: #475569; color: #f1f5f9; }
-        body.theme-dark .profile-section { background: rgba(255,255,255,0.1); }
-        body.theme-dark .settings-btn { background: rgba(255,255,255,0.1); }
+        body.theme-dark .theme-option.active { border-color: #14b8a6; }
+        body.theme-dark .level-card { background: #334155; }
+        body.theme-dark .fact-card { background: #334155; }
 
+        /* === ОБЩИЕ СТИЛИ === */
         .app-container {
             max-width: 700px;
             margin: 0 auto;
@@ -105,15 +111,12 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
             color: white;
         }
         .stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4,1fr);
             gap: 10px;
             margin-bottom: 20px;
         }
@@ -141,7 +144,6 @@
             border: none;
             background: #e2e8f0;
             cursor: pointer;
-            transition: 0.2s;
             font-size: 0.8rem;
         }
         .category-bar {
@@ -152,7 +154,6 @@
             padding-bottom: 8px;
         }
         .category-badge {
-            background: #ccfbf1;
             padding: 6px 16px;
             border-radius: 30px;
             font-size: 0.8rem;
@@ -164,9 +165,7 @@
             background: #14b8a6;
             color: white;
         }
-        .add-task-panel {
-            margin-bottom: 20px;
-        }
+        .add-task-panel { margin-bottom: 20px; }
         .row-inputs {
             display: flex;
             gap: 8px;
@@ -191,9 +190,7 @@
             font-size: 1rem;
             cursor: pointer;
         }
-        .task-list {
-            margin-top: 20px;
-        }
+        .task-list { margin-top: 20px; }
         .task-item {
             display: flex;
             justify-content: space-between;
@@ -201,6 +198,7 @@
             padding: 16px;
             border-radius: 16px;
             margin-bottom: 12px;
+            transition: 0.2s;
         }
         .task-left {
             display: flex;
@@ -234,6 +232,7 @@
         .task-right {
             display: flex;
             gap: 8px;
+            align-items: center;
         }
         .task-edit, .task-delete {
             background: none;
@@ -285,29 +284,96 @@
             height: 50px;
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid transparent;
+            transition: 0.2s;
         }
         .theme-teal-bg { background: #14b8a6; }
         .theme-dark-bg { background: #1e293b; border: 1px solid #475569; }
-        .theme-option.active { border-color: #fff; box-shadow: 0 0 0 2px #14b8a6; }
+        .theme-option.active { transform: scale(1.1); }
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            background: #e2e8f0;
+            cursor: pointer;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .profile-stats {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+        }
+        .levels-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .level-card {
+            padding: 15px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .level-card.current {
+            background: #0f766e;
+            color: white;
+            border: 1px solid #14b8a6;
+        }
+        .fact-card {
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .slider-container input { flex: 1; }
+        .motivation-text {
+            text-align: center;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        button { cursor: pointer; }
+        .avatar-upload {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .avatar-upload label {
+            background: #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
         .avatar-preview {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background: #f1f5f9;
+            background: #f0fdfa;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            margin-bottom: 10px;
         }
         .avatar-preview img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-        button {
-            cursor: pointer;
         }
     </style>
 </head>
@@ -353,23 +419,22 @@
             </select>
         </div>
         <div class="row-inputs">
+            <div style="font-size:0.7rem; align-self:center;">Приоритет задачи:</div>
             <select id="prioritySelect">
                 <option value="low">🟢 Низкий</option>
                 <option value="medium">🟡 Средний</option>
                 <option value="high">🔴 Высокий</option>
             </select>
-            <input type="datetime-local" id="deadlineInput">
+            <input type="datetime-local" id="deadlineInput" placeholder="Дедлайн">
         </div>
-        <button id="addBtn">+ Добавить</button>
+        <button id="addBtn">+ Добавить задачу</button>
     </div>
 
     <div class="task-list" id="taskList">
         <div class="empty">✨ Нет задач в этом разделе</div>
     </div>
 
-    <div class="version">
-        Planifica v2.0
-    </div>
+    <div class="version">Planifica v3.0 | Продуктивность + Приватность</div>
 </div>
 
 <!-- Модалка настроек -->
@@ -378,32 +443,69 @@
         <h2>⚙️ Настройки</h2>
         <h3>🎨 Цветовая тема</h3>
         <div class="theme-options">
-            <div class="theme-option theme-teal-bg active" data-theme="teal"></div>
-            <div class="theme-option theme-dark-bg" data-theme="dark"></div>
+            <div class="theme-option theme-teal-bg active" data-theme="teal" title="Бирюзовая"></div>
+            <div class="theme-option theme-dark-bg" data-theme="dark" title="Тёмная"></div>
         </div>
-        <button id="closeSettings" style="margin-top: 15px; background: #14b8a6; color: white; border: none; padding: 10px 20px; border-radius: 30px;">Закрыть</button>
+        <button id="closeSettings" style="margin-top:15px; background:#14b8a6; color:white; border:none; padding:10px 20px; border-radius:30px;">Закрыть</button>
     </div>
 </div>
 
 <!-- Модалка профиля -->
 <div id="profileModal" class="modal">
     <div class="modal-content">
-        <h2>👤 Профиль</h2>
-        <div class="avatar-preview" id="avatarPreview">
-            <span>😎</span>
+        <h2>👤 Мой профиль</h2>
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="profile">📝 Профиль</button>
+            <button class="tab-btn" data-tab="levels">🏆 Уровни</button>
+            <button class="tab-btn" data-tab="facts">🌟 Факты дня</button>
         </div>
-        <input type="file" id="avatarUpload" accept="image/*" style="margin-bottom: 15px;">
-        <input type="text" id="userName" placeholder="Ваше имя" style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 30px; border: 1px solid #ddd;">
-        <select id="userGender" style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 30px;">
-            <option value="male">Мужской</option>
-            <option value="female">Женский</option>
-        </select>
-        <textarea id="userGoal" rows="3" placeholder="Ваша цель..." style="width: 100%; margin: 10px 0; padding: 12px; border-radius: 20px;"></textarea>
-        <div class="profile-stats" style="margin: 15px 0;">
-            <p>📈 Выполнено задач: <span id="profileCompleted">0</span></p>
+        
+        <div id="tabProfile" class="tab-content active">
+            <div class="avatar-upload">
+                <div class="avatar-preview" id="avatarPreview">
+                    <img id="avatarImg" src="" alt="avatar">
+                </div>
+                <label for="avatarInput">📷 Загрузить фото</label>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none">
+            </div>
+            <input type="text" id="userName" placeholder="Ваше имя" style="width:100%; margin:10px 0; padding:12px; border-radius:30px;">
+            <select id="userGender" style="width:100%; margin:10px 0; padding:12px; border-radius:30px;">
+                <option value="male">👨 Мужской</option>
+                <option value="female">👩 Женский</option>
+            </select>
+            <textarea id="userGoal" rows="3" placeholder="Ваша цель..." style="width:100%; margin:10px 0; padding:12px; border-radius:20px;"></textarea>
+            <div class="profile-stats">
+                <p>📈 Выполнено задач: <span id="profileCompleted">0</span></p>
+                <p>🏆 Текущий уровень: <span id="profileLevel">⭐ Новичок</span></p>
+                <p>⭐ До следующего уровня: <span id="nextLevelTasks">100</span> задач</p>
+            </div>
+            <button id="saveProfile" style="background:#14b8a6; color:white; border:none; padding:12px; border-radius:30px; width:100%;">💾 Сохранить</button>
+            <button id="closeProfile" style="margin-top:10px; background:#94a3b8; color:white; border:none; padding:12px; border-radius:30px; width:100%;">🔒 Закрыть</button>
         </div>
-        <button id="saveProfile" style="background: #14b8a6; color: white; border: none; padding: 12px; border-radius: 30px; width: 100%;">💾 Сохранить</button>
-        <button id="closeProfile" style="margin-top: 10px; background: #94a3b8; color: white; border: none; padding: 12px; border-radius: 30px; width: 100%;">Закрыть</button>
+        
+        <div id="tabLevels" class="tab-content">
+            <div class="levels-container" id="levelsContainer"></div>
+        </div>
+        
+        <div id="tabFacts" class="tab-content">
+            <div id="factOfTheDay" class="fact-card"></div>
+            <div id="scienceFact" class="fact-card"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка оценки -->
+<div id="ratingModal" class="modal">
+    <div class="modal-content">
+        <h3>🎯 Как вам было выполнять задачу?</h3>
+        <div class="slider-container">
+            <span>😊</span>
+            <input type="range" id="difficultySlider" min="1" max="3" step="1" value="2">
+            <span>😟</span>
+        </div>
+        <div id="sliderEmoji" style="font-size:2rem; text-align:center;">😐</div>
+        <div id="motivationMessage" class="motivation-text"></div>
+        <button id="submitRating" style="background:#14b8a6; color:white; border:none; padding:12px; border-radius:30px; width:100%;">✨ Отлично! ✨</button>
     </div>
 </div>
 
@@ -412,15 +514,38 @@
     let tasks = [];
     let currentView = 'today';
     let currentCategory = 'work';
+    let currentRatingTaskId = null;
+
     let userProfile = {
         name: '',
-        avatarData: null, // base64 фото
+        avatarData: '', // base64 или пусто
         gender: 'male',
         goal: '',
         totalCompleted: 0
     };
 
-    // Загрузка данных из localStorage
+    const levels = [
+        { name: '⭐ Новичок', min: 0, icon: '🌱', desc: 'Первый шаг' },
+        { name: '📌 Организатор', min: 100, icon: '📋', desc: 'Вы уже умеете планировать' },
+        { name: '🏅 Мастер планов', min: 200, icon: '🎯', desc: 'Планирование — ваш навык' },
+        { name: '⚡ Эксперт продуктивности', min: 400, icon: '🚀', desc: 'Время ускоряться' },
+        { name: '👑 Легенда продуктивности', min: 700, icon: '🏆', desc: 'Вы достигли вершины!' }
+    ];
+
+    const facts = [
+        { text: '🧠 Планирование снижает уровень стресса на 30%', source: 'Psychology Today' },
+        { text: '📝 Люди, записывающие цели, достигают их в 2 раза чаще', source: 'Harvard Business Review' },
+        { text: '🕰️ Правило 2 минут: Если дело занимает меньше 2 минут — сделайте его сразу', source: 'Дэвид Аллен' },
+        { text: '🎯 80% важных результатов приносят 20% усилий', source: 'Парето' },
+        { text: '📅 Планирование дня с вечера повышает продуктивность на 40%', source: 'Американская псих. ассоциация' }
+    ];
+
+    const scienceFacts = [
+        { text: '🔬 Допамин: Выполнение задач стимулирует выработку дофамина — гормона мотивации' },
+        { text: '🧠 Нейропластичность: Регулярное планирование улучшает когнитивные способности' },
+        { text: '⏰ Циркадные ритмы: Самые сложные задачи лучше решать утром' }
+    ];
+
     function loadData() {
         const saved = localStorage.getItem('planifica_data');
         if (saved) {
@@ -429,11 +554,11 @@
                 tasks = data.tasks || [];
                 if (data.userProfile) {
                     userProfile = { ...userProfile, ...data.userProfile };
+                    if (!userProfile.gender) userProfile.gender = 'male';
                 }
-                updateTotalCompleted();
+                updateStatsFromTasks();
             } catch(e) {}
         }
-        // Тема
         const savedTheme = localStorage.getItem('planifica_theme');
         if (savedTheme === 'dark') {
             document.body.classList.remove('theme-teal');
@@ -458,8 +583,9 @@
         localStorage.setItem('planifica_data', JSON.stringify(data));
     }
 
-    function updateTotalCompleted() {
-        userProfile.totalCompleted = tasks.filter(t => t.completed).length;
+    function updateStatsFromTasks() {
+        let completed = tasks.filter(t => t.completed).length;
+        userProfile.totalCompleted = completed;
     }
 
     function addTask(title, category, deadline, priority) {
@@ -478,21 +604,21 @@
         render();
     }
 
-    function toggleComplete(id) {
+    function toggleTaskComplete(id) {
         const task = tasks.find(t => t.id == id);
-        if (task) {
-            task.completed = !task.completed;
-            updateTotalCompleted();
+        if (task && !task.completed) {
+            task.completed = true;
+            userProfile.totalCompleted++;
+            currentRatingTaskId = id;
+            document.getElementById('ratingModal').style.display = 'flex';
+            saveData();
+            render();
+        } else if (task && task.completed) {
+            task.completed = false;
+            userProfile.totalCompleted = Math.max(0, userProfile.totalCompleted - 1);
             saveData();
             render();
         }
-    }
-
-    function deleteTask(id) {
-        tasks = tasks.filter(t => t.id != id);
-        updateTotalCompleted();
-        saveData();
-        render();
     }
 
     function editTask(id, newTitle, newCategory, newDeadline, newPriority) {
@@ -507,47 +633,51 @@
         }
     }
 
-    // Фильтрация задач
+    function deleteTask(id) {
+        tasks = tasks.filter(t => t.id != id);
+        saveData();
+        render();
+    }
+
     function getFilteredTasks() {
         let filtered = [...tasks];
-        // по категории
         if (currentCategory !== 'all') {
             filtered = filtered.filter(t => t.category === currentCategory);
         }
         const now = new Date();
-        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const tomorrowStart = new Date(todayStart);
-        tomorrowStart.setDate(tomorrowStart.getDate() + 1);
-        const weekEnd = new Date(todayStart);
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const weekEnd = new Date(today);
         weekEnd.setDate(weekEnd.getDate() + 7);
 
         if (currentView === 'today') {
             filtered = filtered.filter(t => {
                 if (!t.deadline) return false;
                 const d = new Date(t.deadline);
-                const deadlineDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-                return deadlineDate.getTime() === todayStart.getTime();
+                const dateOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                return dateOnly.getTime() === today.getTime();
             });
         } else if (currentView === 'tomorrow') {
             filtered = filtered.filter(t => {
                 if (!t.deadline) return false;
                 const d = new Date(t.deadline);
-                const deadlineDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-                return deadlineDate.getTime() === tomorrowStart.getTime();
+                const dateOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                return dateOnly.getTime() === tomorrow.getTime();
             });
         } else if (currentView === 'week') {
             filtered = filtered.filter(t => {
                 if (!t.deadline) return false;
                 const d = new Date(t.deadline);
-                const deadlineDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-                return deadlineDate >= todayStart && deadlineDate < weekEnd;
+                const dateOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                return dateOnly >= today && dateOnly < weekEnd;
             });
         } else if (currentView === 'archive') {
             filtered = filtered.filter(t => t.completed === true);
-        } else { // all
+        } else {
             filtered = filtered.filter(t => !t.completed);
         }
-        // сортировка по дедлайну
+
         filtered.sort((a,b) => {
             if (a.deadline && b.deadline) return new Date(a.deadline) - new Date(b.deadline);
             if (a.deadline) return -1;
@@ -579,14 +709,14 @@
         let html = '';
         filtered.forEach(task => {
             const isOverdue = !task.completed && task.deadline && new Date(task.deadline) < new Date();
-            const priorityText = task.priority === 'high' ? '🔴 Высокий' : (task.priority === 'medium' ? '🟡 Средний' : '🟢 Низкий');
+            const priorityClass = task.priority === 'high' ? '🔴' : (task.priority === 'medium' ? '🟡' : '🟢');
             const catIcon = task.category === 'work' ? '💼' : (task.category === 'personal' ? '🏠' : '📚');
             html += `
-                <div class="task-item">
+                <div class="task-item" data-id="${task.id}">
                     <div class="task-left">
-                        <input type="checkbox" class="task-checkbox" data-id="${task.id}" ${task.completed ? 'checked' : ''}>
+                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}">
                         <span class="task-title ${task.completed ? 'task-completed' : ''}">${escapeHtml(task.title)}</span>
-                        <span class="task-priority">${priorityText}</span>
+                        <span class="task-priority">${priorityClass} ${task.priority === 'high' ? 'Высокий' : (task.priority === 'medium' ? 'Средний' : 'Низкий')}</span>
                         <span class="category-badge" style="font-size:0.7rem;">${catIcon} ${task.category === 'work' ? 'Работа' : (task.category === 'personal' ? 'Личное' : 'Учёба')}</span>
                         ${task.deadline ? `<span style="font-size:0.7rem;">📅 ${new Date(task.deadline).toLocaleString()}</span>` : ''}
                         ${isOverdue ? '<span style="color:#f97316;">⚠️ Просрочено</span>' : ''}
@@ -599,19 +729,18 @@
             `;
         });
         container.innerHTML = html;
-        // события
         document.querySelectorAll('.task-checkbox').forEach(cb => {
-            cb.addEventListener('change', (e) => toggleComplete(parseInt(e.target.dataset.id)));
+            cb.addEventListener('change', (e) => toggleTaskComplete(parseInt(e.target.dataset.id)));
         });
         document.querySelectorAll('.task-edit').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(e.currentTarget.dataset.id);
-                const task = tasks.find(t => t.id === id);
+                const task = tasks.find(t => t.id == id);
                 if (task) {
-                    let newTitle = prompt('Новое название', task.title);
+                    const newTitle = prompt('Новое название:', task.title);
                     if (newTitle !== null) {
-                        let newCat = prompt('Категория (work/personal/study)', task.category);
-                        let newPriority = prompt('Приоритет (low/medium/high)', task.priority);
+                        const newCat = prompt('Категория (work/personal/study):', task.category);
+                        const newPriority = prompt('Приоритет (low/medium/high):', task.priority);
                         editTask(id, newTitle, newCat, task.deadline, newPriority);
                     }
                 }
@@ -625,41 +754,89 @@
     }
 
     function escapeHtml(str) {
-        return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m] || m));
+        return str.replace(/[&<>]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m] || m));
     }
 
-    function renderHeader() {
-        const avatarDiv = document.getElementById('headerAvatar');
-        if (userProfile.avatarData) {
-            avatarDiv.innerHTML = `<img src="${userProfile.avatarData}" alt="avatar">`;
+    function renderProfileTab() {
+        const avatarImg = document.getElementById('avatarImg');
+        if (userProfile.avatarData && userProfile.avatarData.startsWith('data:image')) {
+            avatarImg.src = userProfile.avatarData;
         } else {
-            avatarDiv.innerHTML = '😎';
-        }
-        document.getElementById('headerName').innerText = userProfile.name || 'Гость';
-    }
-
-    function renderProfileModal() {
-        const preview = document.getElementById('avatarPreview');
-        if (userProfile.avatarData) {
-            preview.innerHTML = `<img src="${userProfile.avatarData}" style="width:100%; height:100%; object-fit:cover;">`;
-        } else {
-            preview.innerHTML = '<span style="font-size:3rem;">😎</span>';
+            avatarImg.src = '';
+            avatarImg.parentElement.innerHTML = '😎';
+            avatarImg.style.display = 'none';
         }
         document.getElementById('userName').value = userProfile.name || '';
-        document.getElementById('userGender').value = userProfile.gender || 'male';
+        document.getElementById('userGender').value = userProfile.gender;
         document.getElementById('userGoal').value = userProfile.goal || '';
         document.getElementById('profileCompleted').innerText = userProfile.totalCompleted;
+        const level = getUserLevel();
+        document.getElementById('profileLevel').innerHTML = level.icon + ' ' + level.name;
+        const next = getNextLevelTasks();
+        document.getElementById('nextLevelTasks').innerText = next;
     }
 
-    function saveProfile() {
-        userProfile.name = document.getElementById('userName').value;
-        userProfile.gender = document.getElementById('userGender').value;
-        userProfile.goal = document.getElementById('userGoal').value;
-        saveData();
-        renderHeader();
+    function getUserLevel() {
+        let current = levels[0];
+        for (let i = levels.length-1; i >=0; i--) {
+            if (userProfile.totalCompleted >= levels[i].min) return levels[i];
+        }
+        return levels[0];
     }
 
-    // Инициализация
+    function getNextLevelTasks() {
+        for (let i=0; i<levels.length; i++) {
+            if (userProfile.totalCompleted < levels[i].min) return levels[i].min - userProfile.totalCompleted;
+        }
+        return 0;
+    }
+
+    function renderLevelsTab() {
+        const container = document.getElementById('levelsContainer');
+        const current = getUserLevel();
+        let html = '';
+        levels.forEach(level => {
+            const isCurrent = level.name === current.name;
+            html += `
+                <div class="level-card ${isCurrent ? 'current' : ''}">
+                    <div><span style="font-size:1.5rem;">${level.icon}</span> ${level.name}</div>
+                    <div>🏆 ${level.min}+ задач</div>
+                    <div style="font-size:0.8rem;">${level.desc}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function renderFactsTab() {
+        const randomFact = facts[Math.floor(Math.random() * facts.length)];
+        const randomScience = scienceFacts[Math.floor(Math.random() * scienceFacts.length)];
+        document.getElementById('factOfTheDay').innerHTML = `<strong>🌟 Факт дня</strong><br>${randomFact.text}<br><small>— ${randomFact.source}</small>`;
+        document.getElementById('scienceFact').innerHTML = `<strong>🧠 Научный факт</strong><br>${randomScience.text}`;
+    }
+
+    function updateHeaderAvatar() {
+        const headerAvatarDiv = document.getElementById('headerAvatar');
+        if (userProfile.avatarData && userProfile.avatarData.startsWith('data:image')) {
+            headerAvatarDiv.innerHTML = `<img src="${userProfile.avatarData}" style="width:100%;height:100%;object-fit:cover;">`;
+        } else {
+            headerAvatarDiv.innerHTML = '😎';
+        }
+    }
+
+    function render() {
+        renderStats();
+        renderTaskList();
+        updateHeaderAvatar();
+        document.getElementById('headerName').innerText = userProfile.name || 'Гость';
+        document.querySelectorAll('.date-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === currentView);
+        });
+        document.querySelectorAll('.category-badge').forEach(badge => {
+            badge.classList.toggle('active', badge.dataset.cat === currentCategory);
+        });
+    }
+
     function init() {
         loadData();
 
@@ -672,26 +849,13 @@
             document.getElementById('taskTitle').value = '';
             document.getElementById('deadlineInput').value = '';
         });
-
         document.querySelectorAll('.date-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                currentView = btn.dataset.view;
-                render();
-                document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
+            btn.addEventListener('click', () => { currentView = btn.dataset.view; render(); });
         });
-
         document.querySelectorAll('.category-badge').forEach(badge => {
-            badge.addEventListener('click', () => {
-                currentCategory = badge.dataset.cat;
-                render();
-                document.querySelectorAll('.category-badge').forEach(b => b.classList.remove('active'));
-                badge.classList.add('active');
-            });
+            badge.addEventListener('click', () => { currentCategory = badge.dataset.cat; render(); });
         });
 
-        // Настройки
         const settingsModal = document.getElementById('settingsModal');
         document.getElementById('settingsBtn').addEventListener('click', () => settingsModal.style.display = 'flex');
         document.getElementById('closeSettings').addEventListener('click', () => settingsModal.style.display = 'none');
@@ -713,55 +877,77 @@
             });
         });
 
-        // Профиль
         const profileModal = document.getElementById('profileModal');
         document.getElementById('profileBtn').addEventListener('click', () => {
-            renderProfileModal();
+            renderProfileTab();
+            renderLevelsTab();
+            renderFactsTab();
             profileModal.style.display = 'flex';
         });
         document.getElementById('closeProfile').addEventListener('click', () => profileModal.style.display = 'none');
         document.getElementById('saveProfile').addEventListener('click', () => {
-            saveProfile();
+            userProfile.name = document.getElementById('userName').value;
+            userProfile.gender = document.getElementById('userGender').value;
+            userProfile.goal = document.getElementById('userGoal').value;
+            saveData();
+            render();
             profileModal.style.display = 'none';
         });
 
-        // Загрузка фото
-        const avatarInput = document.getElementById('avatarUpload');
+        const avatarInput = document.getElementById('avatarInput');
+        document.querySelector('#avatarUploadLabel')?.addEventListener('click', () => avatarInput.click());
+        const avatarLabel = document.querySelector('.avatar-upload label');
+        if (avatarLabel) avatarLabel.addEventListener('click', () => avatarInput.click());
         avatarInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) {
+            if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
-                reader.onload = function(ev) {
+                reader.onload = (ev) => {
                     userProfile.avatarData = ev.target.result;
                     saveData();
-                    renderProfileModal();
-                    renderHeader();
+                    renderProfileTab();
+                    render();
                 };
                 reader.readAsDataURL(file);
             }
         });
 
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                if (tab === 'levels') renderLevelsTab();
+                if (tab === 'facts') renderFactsTab();
+            });
+        });
+
+        const ratingModal = document.getElementById('ratingModal');
+        const slider = document.getElementById('difficultySlider');
+        const emojiSpan = document.getElementById('sliderEmoji');
+        const msgSpan = document.getElementById('motivationMessage');
+        slider.addEventListener('input', () => {
+            const val = parseInt(slider.value);
+            if (val === 1) { emojiSpan.innerText = '😟'; msgSpan.innerText = 'Не расстраивайтесь, в следующий раз будет легче! 💪'; }
+            else if (val === 2) { emojiSpan.innerText = '😐'; msgSpan.innerText = 'Хорошо, но можно лучше! 🌟'; }
+            else { emojiSpan.innerText = '😊'; msgSpan.innerText = 'Отлично! Так держать! 🚀'; }
+        });
+        slider.dispatchEvent(new Event('input'));
+        document.getElementById('submitRating').addEventListener('click', () => {
+            ratingModal.style.display = 'none';
+            currentRatingTaskId = null;
+            render();
+        });
+
         window.addEventListener('click', (e) => {
             if (e.target === settingsModal) settingsModal.style.display = 'none';
             if (e.target === profileModal) profileModal.style.display = 'none';
+            if (e.target === ratingModal) ratingModal.style.display = 'none';
         });
-
         render();
     }
-
-    function render() {
-        renderStats();
-        renderTaskList();
-        renderHeader();
-        // обновим активные фильтры
-        document.querySelectorAll('.date-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.view === currentView);
-        });
-        document.querySelectorAll('.category-badge').forEach(badge => {
-            badge.classList.toggle('active', badge.dataset.cat === currentCategory);
-        });
-    }
-
     init();
 })();
 </script>
