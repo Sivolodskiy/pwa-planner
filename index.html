@@ -7,21 +7,19 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#14b8a6">
     <style>
+        /* ... все стили, как в предыдущем рабочем варианте ... */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             padding: 20px;
             transition: background 0.3s ease, color 0.2s;
         }
-
-        /* === БИРЮЗОВАЯ ТЕМА (по умолчанию) === */
         body.theme-teal {
             background: linear-gradient(135deg, #ccfbf1 0%, #f0fdfa 100%);
             color: #1e293b;
@@ -40,8 +38,10 @@
         body.theme-teal .fact-card { background: #f0fdfa; border-left: 4px solid #14b8a6; }
         body.theme-teal .science-fact { background: #e6f7ff; border-left: 4px solid #0ea5e9; }
         body.theme-teal .task-priority { background: #e2e8f0; color: #1e293b; }
+        /* доп. контраст для уровня "Новичок" */
+        body.theme-teal .level-card.current { background: #0f766e; color: white; border: 1px solid #14b8a6; }
+        body.theme-dark .level-card.current { background: #0f766e; color: white; }
 
-        /* === ТЁМНАЯ ТЕМА === */
         body.theme-dark {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: #e2e8f0;
@@ -60,333 +60,61 @@
         body.theme-dark .science-fact { background: #0c4a6e; border-left: 4px solid #38bdf8; }
         body.theme-dark .task-priority { background: #475569; color: #f1f5f9; }
 
-        /* === ОБЩИЕ СТИЛИ === */
-        .app-container {
-            max-width: 700px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 16px;
-            border-radius: 50px;
-            margin-bottom: 20px;
-            color: white;
-        }
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 12px 5px 8px;
-            border-radius: 40px;
-            cursor: pointer;
-        }
-        .profile-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            overflow: hidden;
-        }
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .profile-name {
-            font-size: 0.8rem;
-            max-width: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+        .app-container { max-width: 700px; margin: 0 auto; width: 100%; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-radius: 50px; margin-bottom: 20px; color: white; }
+        .profile-section { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); padding: 5px 12px 5px 8px; border-radius: 40px; cursor: pointer; }
+        .profile-avatar { width: 34px; height: 34px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 1rem; overflow: hidden; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-name { font-size: 0.8rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         h1 { font-size: 1.2rem; font-weight: 600; }
-        .settings-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            font-size: 1.2rem;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            text-align: center;
-            line-height: 1;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4,1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .stats div {
-            padding: 12px;
-            border-radius: 20px;
-            text-align: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        .stats div span {
-            font-size: 1.3rem;
-            display: block;
-            font-weight: 800;
-        }
-        .date-filter {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-        .date-btn {
-            padding: 8px 16px;
-            border-radius: 30px;
-            border: none;
-            background: #e2e8f0;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .category-bar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-        }
-        .category-badge {
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .category-badge.active {
-            background: #14b8a6;
-            color: white;
-        }
+        .settings-btn { background: rgba(255,255,255,0.2); border: none; font-size: 1.2rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; }
+        .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 20px; }
+        .stats div { padding: 12px; border-radius: 20px; text-align: center; font-size: 0.8rem; font-weight: bold; }
+        .stats div span { font-size: 1.3rem; display: block; font-weight: 800; }
+        .date-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .date-btn { padding: 8px 16px; border-radius: 30px; border: none; background: #e2e8f0; cursor: pointer; font-size: 0.8rem; }
+        .category-bar { display: flex; gap: 12px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 8px; }
+        .category-badge { padding: 6px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: 500; cursor: pointer; white-space: nowrap; }
+        .category-badge.active { background: #14b8a6; color: white; }
         .add-task-panel { margin-bottom: 20px; }
-        .row-inputs {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-            align-items: center;
-        }
-        .row-inputs input, .row-inputs select {
-            flex: 1;
-            padding: 12px;
-            border-radius: 30px;
-            border: 1px solid #e2e8f0;
-            font-size: 0.9rem;
-        }
-        #addBtn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 30px;
-            background: #14b8a6;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-        }
+        .row-inputs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+        .row-inputs input, .row-inputs select { flex: 1; padding: 12px; border-radius: 30px; border: 1px solid #e2e8f0; font-size: 0.9rem; }
+        #addBtn { width: 100%; padding: 12px; border: none; border-radius: 30px; background: #14b8a6; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; }
         .task-list { margin-top: 20px; }
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 12px;
-            transition: 0.2s;
-        }
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-            flex-wrap: wrap;
-        }
-        .task-checkbox {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            accent-color: #14b8a6;
-        }
-        .task-title {
-            font-size: 1rem;
-            font-weight: 500;
-            word-break: break-word;
-            flex: 1;
-        }
-        .task-completed {
-            text-decoration: line-through;
-            opacity: 0.6;
-        }
-        .task-priority {
-            font-size: 0.7rem;
-            padding: 4px 8px;
-            border-radius: 30px;
-            background: #e2e8f0;
-        }
-        .task-right {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        .task-edit, .task-delete {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 30px;
-        }
-        .empty {
-            text-align: center;
-            padding: 40px;
-            opacity: 0.7;
-        }
-        .version {
-            text-align: center;
-            font-size: 0.7rem;
-            margin-top: 30px;
-            opacity: 0.5;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            width: 90%;
-            max-width: 500px;
-            padding: 24px;
-            border-radius: 32px;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        .theme-options {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin: 15px 0;
-        }
-        .theme-option {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 16px; margin-bottom: 12px; transition: 0.2s; }
+        .task-left { display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap; }
+        .task-checkbox { width: 24px; height: 24px; cursor: pointer; accent-color: #14b8a6; }
+        .task-title { font-size: 1rem; font-weight: 500; word-break: break-word; flex: 1; }
+        .task-completed { text-decoration: line-through; opacity: 0.6; }
+        .task-priority { font-size: 0.7rem; padding: 4px 8px; border-radius: 30px; background: #e2e8f0; }
+        .task-right { display: flex; gap: 8px; align-items: center; }
+        .task-edit, .task-delete { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 6px; border-radius: 30px; }
+        .empty { text-align: center; padding: 40px; opacity: 0.7; }
+        .version { text-align: center; font-size: 0.7rem; margin-top: 30px; opacity: 0.5; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { width: 90%; max-width: 500px; padding: 24px; border-radius: 32px; max-height: 85vh; overflow-y: auto; }
+        .theme-options { display: flex; gap: 15px; justify-content: center; margin: 15px 0; }
+        .theme-option { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
         .theme-teal-bg { background: #14b8a6; }
         .theme-dark-bg { background: #1e293b; border: 1px solid #475569; }
         .theme-option.active { transform: scale(1.1); }
-        .tab-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 30px;
-            background: #e2e8f0;
-            cursor: pointer;
-        }
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 30px; background: #e2e8f0; cursor: pointer; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .profile-stats {
-            background: rgba(0,0,0,0.05);
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
-        }
-        .levels-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .level-card {
-            padding: 15px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            transition: 0.2s;
-        }
-        .level-card.current {
-            background: #0f766e;
-            color: white;
-            border: 1px solid #14b8a6;
-        }
-        .fact-card, .science-fact {
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            transition: 0.2s;
-        }
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
+        .profile-stats { background: rgba(0,0,0,0.05); padding: 15px; border-radius: 20px; margin: 15px 0; }
+        .levels-container { display: flex; flex-direction: column; gap: 12px; }
+        .level-card { padding: 15px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; transition: 0.2s; }
+        .level-card.current { background: #0f766e; color: white; border: 1px solid #14b8a6; }
+        .fact-card, .science-fact { padding: 20px; border-radius: 20px; margin-bottom: 15px; transition: 0.2s; }
+        .slider-container { display: flex; align-items: center; gap: 15px; margin: 20px 0; }
         .slider-container input { flex: 1; }
-        .motivation-text {
-            text-align: center;
-            padding: 15px;
-            font-size: 1rem;
-            font-weight: 500;
-        }
+        .motivation-text { text-align: center; padding: 15px; font-size: 1rem; font-weight: 500; }
         button { cursor: pointer; }
-        .avatar-upload {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .avatar-upload label {
-            background: #e2e8f0;
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .avatar-preview {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #f0fdfa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .avatar-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .avatar-upload { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .avatar-upload label { background: #e2e8f0; padding: 8px 16px; border-radius: 30px; cursor: pointer; font-size: 0.8rem; }
+        .avatar-preview { width: 70px; height: 70px; border-radius: 50%; background: #f0fdfa; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body class="theme-teal">
@@ -415,7 +143,7 @@
         <button class="date-btn" data-view="archive">Архив</button>
     </div>
 
-    <div class="category-bar" id="categoryBar">
+    <div class="category-bar">
         <div class="category-badge active" data-cat="work">💼 Работа</div>
         <div class="category-badge" data-cat="personal">🏠 Личное</div>
         <div class="category-badge" data-cat="study">📚 Учёба</div>
@@ -522,8 +250,8 @@
 </div>
 
 <script>
-(function() {
-    // ---------- данные ----------
+(function(){
+    // Данные
     let tasks = [];
     let currentView = 'today';
     let currentCategory = 'work';
@@ -552,14 +280,13 @@
         { text: '🎯 80% важных результатов приносят 20% усилий', source: 'Парето' },
         { text: '📅 Планирование дня с вечера повышает продуктивность на 40%', source: 'Американская псих. ассоциация' }
     ];
-
     const scienceFacts = [
         { text: '🔬 Допамин: Выполнение задач стимулирует выработку дофамина — гормона мотивации' },
         { text: '🧠 Нейропластичность: Регулярное планирование улучшает когнитивные способности' },
         { text: '⏰ Циркадные ритмы: Самые сложные задачи лучше решать утром' }
     ];
 
-    // ---------- загрузка / сохранение ----------
+    // Загрузка / сохранение
     function loadData() {
         const saved = localStorage.getItem('planifica_data');
         if (saved) {
@@ -568,12 +295,13 @@
                 tasks = data.tasks || [];
                 if (data.userProfile) {
                     userProfile = { ...userProfile, ...data.userProfile };
+                    if (!userProfile.gender) userProfile.gender = 'male';
                 }
                 updateStatsFromTasks();
             } catch(e) {}
         }
-        const savedTheme = localStorage.getItem('planifica_theme');
-        if (savedTheme === 'dark') {
+        const theme = localStorage.getItem('planifica_theme');
+        if (theme === 'dark') {
             document.body.classList.remove('theme-teal');
             document.body.classList.add('theme-dark');
             setActiveThemeOption('dark');
@@ -594,15 +322,13 @@
         saveData();
     }
 
-    // ---------- тема ----------
     function setActiveThemeOption(theme) {
         document.querySelectorAll('.theme-option').forEach(opt => {
-            if (opt.dataset.theme === theme) opt.classList.add('active');
-            else opt.classList.remove('active');
+            opt.classList.toggle('active', opt.dataset.theme === theme);
         });
     }
 
-    // ---------- работа с задачами ----------
+    // Задачи
     function addTask(title, category, deadline, priority) {
         if (!title.trim()) return;
         tasks.push({
@@ -653,16 +379,15 @@
         render();
     }
 
-    // ---------- фильтрация ----------
+    // Фильтрация
     function getFilteredTasks() {
         let filtered = [...tasks];
         if (currentCategory !== 'all')
             filtered = filtered.filter(t => t.category === currentCategory);
-
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
-        const weekEnd = new Date(today); weekEnd.setDate(weekEnd.getDate() + 7);
+        const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
+        const weekEnd = new Date(today); weekEnd.setDate(weekEnd.getDate()+7);
 
         if (currentView === 'today') {
             filtered = filtered.filter(t => t.deadline && new Date(new Date(t.deadline).toDateString()).getTime() === today.getTime());
@@ -675,12 +400,11 @@
         } else {
             filtered = filtered.filter(t => !t.completed);
         }
-
         filtered.sort((a,b) => (a.deadline || 9e9) - (b.deadline || 9e9));
         return filtered;
     }
 
-    // ---------- рендер ----------
+    // Рендер
     function renderStats() {
         const all = tasks.length;
         const active = tasks.filter(t => !t.completed).length;
@@ -724,7 +448,7 @@
             `;
         });
         container.innerHTML = html;
-        // события для чекбоксов, кнопок
+        // события
         document.querySelectorAll('.task-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => toggleTaskComplete(parseInt(e.target.dataset.id)));
         });
@@ -733,10 +457,10 @@
                 const id = parseInt(e.currentTarget.dataset.id);
                 const task = tasks.find(t => t.id == id);
                 if (task) {
-                    const newTitle = prompt('Новое название:', task.title);
+                    let newTitle = prompt('Новое название:', task.title);
                     if (newTitle !== null) {
-                        const newCat = prompt('Категория (work/personal/study):', task.category);
-                        const newPriority = prompt('Приоритет (low/medium/high):', task.priority);
+                        let newCat = prompt('Категория (work/personal/study):', task.category);
+                        let newPriority = prompt('Приоритет (low/medium/high):', task.priority);
                         editTask(id, newTitle, newCat, task.deadline, newPriority);
                     }
                 }
@@ -750,7 +474,7 @@
     }
 
     function escapeHtml(str) {
-        return str.replace(/[&<>]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m] || m));
+        return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m] || m));
     }
 
     function updateHeaderAvatar() {
@@ -763,7 +487,7 @@
         document.getElementById('headerName').innerText = userProfile.name || 'Гость';
     }
 
-    // ---------- профиль, уровни, факты ----------
+    // Профиль
     function renderProfileTab() {
         const avatarPreview = document.getElementById('avatarPreview');
         const avatarImg = document.getElementById('avatarImg');
@@ -801,10 +525,10 @@
     }
     function renderLevelsTab() {
         const container = document.getElementById('levelsContainer');
-        const current = getUserLevel();
+        const currentLevel = getUserLevel();
         let html = '';
         levels.forEach(level => {
-            const isCurrent = level.name === current.name;
+            const isCurrent = level.name === currentLevel.name;
             html += `
                 <div class="level-card ${isCurrent ? 'current' : ''}">
                     <div><span style="font-size:1.5rem;">${level.icon}</span> ${level.name}</div>
@@ -822,7 +546,7 @@
         document.getElementById('scienceFact').innerHTML = `<strong>🧠 Научное открытие</strong><br>${sci.text}`;
     }
 
-    // ---------- открытие/закрытие модалок ----------
+    // Модалки
     function openProfileModal() {
         renderProfileTab();
         renderLevelsTab();
@@ -839,7 +563,6 @@
         document.getElementById('settingsModal').style.display = 'none';
     }
 
-    // ---------- общий рендер ----------
     function render() {
         renderStats();
         renderTaskList();
@@ -852,28 +575,27 @@
         });
     }
 
-    // ---------- инициализация и обработчики ----------
+    // Инициализация
     function init() {
         loadData();
 
-        // добавление задачи
         document.getElementById('addBtn').addEventListener('click', () => {
-            const title = document.getElementById('taskTitle').value;
-            const category = document.getElementById('categorySelect').value;
-            const deadline = document.getElementById('deadlineInput').value;
-            const priority = document.getElementById('prioritySelect').value;
-            addTask(title, category, deadline, priority);
+            addTask(
+                document.getElementById('taskTitle').value,
+                document.getElementById('categorySelect').value,
+                document.getElementById('deadlineInput').value,
+                document.getElementById('prioritySelect').value
+            );
             document.getElementById('taskTitle').value = '';
             document.getElementById('deadlineInput').value = '';
         });
-        // фильтры дат
+
         document.querySelectorAll('.date-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 currentView = btn.dataset.view;
                 render();
             });
         });
-        // фильтры категорий
         document.querySelectorAll('.category-badge').forEach(badge => {
             badge.addEventListener('click', () => {
                 currentCategory = badge.dataset.cat;
@@ -881,8 +603,7 @@
             });
         });
 
-        // настройки (тема)
-        const settingsModal = document.getElementById('settingsModal');
+        // Настройки темы
         document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
         document.getElementById('closeSettings').addEventListener('click', closeSettingsModal);
         document.querySelectorAll('.theme-option').forEach(opt => {
@@ -898,17 +619,15 @@
                     localStorage.setItem('planifica_theme', 'teal');
                 }
                 setActiveThemeOption(theme);
-                renderFactsTab(); // перекрасить факты
+                renderFactsTab(); // обновить цвета фактов
             });
         });
 
-        // профиль
+        // Профиль
         const profileBtn = document.getElementById('profileBtn');
-        const closeProfileBtn = document.getElementById('closeProfile');
-        const saveProfileBtn = document.getElementById('saveProfile');
         profileBtn.addEventListener('click', openProfileModal);
-        closeProfileBtn.addEventListener('click', closeProfileModal);
-        saveProfileBtn.addEventListener('click', () => {
+        document.getElementById('closeProfile').addEventListener('click', closeProfileModal);
+        document.getElementById('saveProfile').addEventListener('click', () => {
             userProfile.name = document.getElementById('userName').value;
             userProfile.gender = document.getElementById('userGender').value;
             userProfile.goal = document.getElementById('userGoal').value;
@@ -917,10 +636,9 @@
             closeProfileModal();
         });
 
-        // загрузка фото
+        // Загрузка фото
         const avatarInput = document.getElementById('avatarInput');
-        const avatarLabel = document.querySelector('.avatar-upload label');
-        if (avatarLabel) avatarLabel.addEventListener('click', () => avatarInput.click());
+        document.querySelector('.avatar-upload label').addEventListener('click', () => avatarInput.click());
         avatarInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
@@ -935,7 +653,7 @@
             }
         });
 
-        // переключение табов профиля
+        // Табы в профиле
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const tab = btn.dataset.tab;
@@ -948,7 +666,7 @@
             });
         });
 
-        // модалка оценки
+        // Модалка оценки
         const ratingModal = document.getElementById('ratingModal');
         const slider = document.getElementById('difficultySlider');
         const emojiSpan = document.getElementById('sliderEmoji');
@@ -964,8 +682,10 @@
             ratingModal.style.display = 'none';
             currentRatingTaskId = null;
         });
+
+        // Закрытие по клику вне
         window.addEventListener('click', (e) => {
-            if (e.target === settingsModal) closeSettingsModal();
+            if (e.target === document.getElementById('settingsModal')) closeSettingsModal();
             if (e.target === document.getElementById('profileModal')) closeProfileModal();
             if (e.target === ratingModal) ratingModal.style.display = 'none';
         });
