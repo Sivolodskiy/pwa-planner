@@ -62,6 +62,30 @@
             width: 36px; height: 36px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; cursor: pointer; color: white;
         }
+        /* Кнопки аутентификации на главном экране */
+        .auth-buttons-main {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .auth-buttons-main button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            background: white;
+            color: #14b8a6;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        body.theme-dark .auth-buttons-main button {
+            background: #1e293b;
+            color: #14b8a6;
+        }
+        .auth-buttons-main button:active { transform: scale(0.96); }
         .stats {
             display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 20px;
         }
@@ -116,8 +140,6 @@
         .auth-buttons { display: flex; gap: 10px; margin-top: 15px; }
         .auth-buttons button { flex:1; background: #14b8a6; border: none; padding: 10px; border-radius: 30px; color: white; cursor: pointer; }
         .logout-btn { background: #f97316; margin-top: 15px; width:100%; padding:10px; border:none; border-radius:30px; color:white; cursor:pointer; }
-        .login-prompt { display: flex; justify-content: center; margin-bottom: 20px; }
-        .login-prompt button { background: #14b8a6; border: none; padding: 10px 25px; border-radius: 40px; color: white; font-size: 1rem; cursor: pointer; }
     </style>
 </head>
 <body class="theme-teal">
@@ -131,9 +153,10 @@
         <div class="settings-btn" id="settingsBtn">⚙️</div>
     </header>
 
-    <!-- Блок, отображаемый только если пользователь не авторизован -->
-    <div id="loginPrompt" class="login-prompt" style="display: none;">
-        <button id="showMainAuthBtn">🔐 Войти / Зарегистрироваться</button>
+    <!-- Две отдельные кнопки для неавторизованных пользователей -->
+    <div id="authButtonsMain" class="auth-buttons-main" style="display: none;">
+        <button id="mainRegisterBtn">📝 Регистрация</button>
+        <button id="mainLoginBtn">🔑 Вход</button>
     </div>
 
     <div class="stats">
@@ -250,7 +273,7 @@
 
 <script>
 (function(){
-    // ---------- СИСТЕМА АВТОРИЗАЦИИ ----------
+    // ---------- Система авторизации ----------
     let users = JSON.parse(localStorage.getItem('planifica_users') || '{}');
     let currentUser = localStorage.getItem('planifica_currentUser') || null;
     let currentTasks = [];
@@ -261,21 +284,10 @@
     function saveCurrentUser() { if(currentUser) localStorage.setItem('planifica_currentUser', currentUser); else localStorage.removeItem('planifica_currentUser'); }
     
     function loadUserData() {
-        if(!currentUser) {
-            currentTasks = [];
-            userProfile = { name: '', avatarData: '', gender: 'male', goal: '', totalCompleted: 0 };
-            return;
-        }
+        if(!currentUser) { currentTasks = []; userProfile = { name: '', avatarData: '', gender: 'male', goal: '', totalCompleted: 0 }; return; }
         const userData = users[currentUser];
-        if(userData) {
-            currentTasks = userData.tasks || [];
-            userProfile = userData.profile || { name: '', avatarData: '', gender: 'male', goal: '', totalCompleted: 0 };
-        } else {
-            currentUser = null;
-            saveCurrentUser();
-            currentTasks = [];
-            userProfile = { name: '', avatarData: '', gender: 'male', goal: '', totalCompleted: 0 };
-        }
+        if(userData) { currentTasks = userData.tasks || []; userProfile = userData.profile || { name: '', avatarData: '', gender: 'male', goal: '', totalCompleted: 0 }; }
+        else { currentUser = null; saveCurrentUser(); currentTasks = []; userProfile = { name: '', avatarData: '', gender: 'male', goal: '', totalCompleted: 0 }; }
         updateStatsFromTasks();
     }
     function saveUserData() {
@@ -285,40 +297,14 @@
         users[currentUser].profile = userProfile;
         saveUsers();
     }
-    function updateStatsFromTasks() {
-        let completed = currentTasks.filter(t => t.completed).length;
-        userProfile.totalCompleted = completed;
-        if(currentUser) saveUserData();
-    }
+    function updateStatsFromTasks() { let completed = currentTasks.filter(t => t.completed).length; userProfile.totalCompleted = completed; if(currentUser) saveUserData(); }
 
-    function register(login, password) {
-        if(users[login]) return false;
-        users[login] = { passwordHash: hashPassword(password), profile: { name: '', avatarData: '', gender: 'male', goal: '', totalCompleted: 0 }, tasks: [] };
-        saveUsers();
-        return true;
-    }
-    function login(login, password) {
-        if(users[login] && users[login].passwordHash === hashPassword(password)) {
-            currentUser = login;
-            saveCurrentUser();
-            loadUserData();
-            render();
-            closeAuthModal();
-            return true;
-        }
-        return false;
-    }
-    function logout() {
-        currentUser = null;
-        saveCurrentUser();
-        loadUserData();
-        render();
-    }
+    function register(login, password) { if(users[login]) return false; users[login] = { passwordHash: hashPassword(password), profile: { name: '', avatarData: '', gender: 'male', goal: '', totalCompleted: 0 }, tasks: [] }; saveUsers(); return true; }
+    function login(login, password) { if(users[login] && users[login].passwordHash === hashPassword(password)) { currentUser = login; saveCurrentUser(); loadUserData(); render(); closeAuthModal(); return true; } return false; }
+    function logout() { currentUser = null; saveCurrentUser(); loadUserData(); render(); }
 
     // ---------- Глобальные переменные ----------
-    let currentView = 'today';
-    let currentCategory = 'work';
-    let currentRatingTaskId = null;
+    let currentView = 'today', currentCategory = 'work', currentRatingTaskId = null;
     const levels = [
         { name: '⭐ Новичок', min: 0, icon: '🌱', desc: 'Первый шаг' },
         { name: '📌 Организатор', min: 100, icon: '📋', desc: 'Вы уже умеете планировать' },
@@ -339,48 +325,24 @@
         { text: '⏰ Циркадные ритмы: Самые сложные задачи лучше решать утром' }
     ];
 
+    // ---------- Работа с задачами ----------
     function addTask(title, category, deadline, priority) {
         if(!title.trim()) return;
-        currentTasks.push({
-            id: Date.now(), title: title.trim(), category, deadline: deadline || null,
-            priority: priority || 'medium', completed: false, createdAt: new Date().toISOString()
-        });
-        saveUserData();
-        render();
+        currentTasks.push({ id: Date.now(), title: title.trim(), category, deadline: deadline || null, priority: priority || 'medium', completed: false, createdAt: new Date().toISOString() });
+        saveUserData(); render();
     }
     function toggleTaskComplete(id) {
         const task = currentTasks.find(t => t.id == id);
-        if(task && !task.completed) {
-            task.completed = true;
-            userProfile.totalCompleted++;
-            currentRatingTaskId = id;
-            document.getElementById('ratingModal').style.display = 'flex';
-            saveUserData();
-            render();
-        } else if(task && task.completed) {
-            task.completed = false;
-            userProfile.totalCompleted = Math.max(0, userProfile.totalCompleted-1);
-            saveUserData();
-            render();
-        }
+        if(task && !task.completed) { task.completed = true; userProfile.totalCompleted++; currentRatingTaskId = id; document.getElementById('ratingModal').style.display = 'flex'; saveUserData(); render(); }
+        else if(task && task.completed) { task.completed = false; userProfile.totalCompleted = Math.max(0, userProfile.totalCompleted-1); saveUserData(); render(); }
     }
     function editTask(id, newTitle, newCategory, newDeadline, newPriority) {
         const task = currentTasks.find(t => t.id == id);
-        if(task) {
-            if(newTitle && newTitle.trim()) task.title = newTitle.trim();
-            if(newCategory) task.category = newCategory;
-            if(newDeadline !== undefined) task.deadline = newDeadline;
-            if(newPriority) task.priority = newPriority;
-            saveUserData();
-            render();
-        }
+        if(task) { if(newTitle && newTitle.trim()) task.title = newTitle.trim(); if(newCategory) task.category = newCategory; if(newDeadline !== undefined) task.deadline = newDeadline; if(newPriority) task.priority = newPriority; saveUserData(); render(); }
     }
-    function deleteTask(id) {
-        currentTasks = currentTasks.filter(t => t.id != id);
-        saveUserData();
-        render();
-    }
+    function deleteTask(id) { currentTasks = currentTasks.filter(t => t.id != id); saveUserData(); render(); }
 
+    // Фильтрация
     function getFilteredTasks() {
         let filtered = [...currentTasks];
         if(currentCategory !== 'all') filtered = filtered.filter(t => t.category === currentCategory);
@@ -388,31 +350,20 @@
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
         const weekEnd = new Date(today); weekEnd.setDate(weekEnd.getDate()+7);
-        if(currentView === 'today') {
-            filtered = filtered.filter(t => t.deadline && new Date(new Date(t.deadline).toDateString()).getTime() === today.getTime());
-        } else if(currentView === 'tomorrow') {
-            filtered = filtered.filter(t => t.deadline && new Date(new Date(t.deadline).toDateString()).getTime() === tomorrow.getTime());
-        } else if(currentView === 'week') {
-            filtered = filtered.filter(t => t.deadline && new Date(t.deadline) >= today && new Date(t.deadline) < weekEnd);
-        } else if(currentView === 'archive') {
-            filtered = filtered.filter(t => t.completed === true);
-        } else {
-            filtered = filtered.filter(t => !t.completed);
-        }
+        if(currentView === 'today') filtered = filtered.filter(t => t.deadline && new Date(new Date(t.deadline).toDateString()).getTime() === today.getTime());
+        else if(currentView === 'tomorrow') filtered = filtered.filter(t => t.deadline && new Date(new Date(t.deadline).toDateString()).getTime() === tomorrow.getTime());
+        else if(currentView === 'week') filtered = filtered.filter(t => t.deadline && new Date(t.deadline) >= today && new Date(t.deadline) < weekEnd);
+        else if(currentView === 'archive') filtered = filtered.filter(t => t.completed === true);
+        else filtered = filtered.filter(t => !t.completed);
         filtered.sort((a,b) => (a.deadline||9e9) - (b.deadline||9e9));
         return filtered;
     }
 
+    // Рендер
     function renderStats() {
-        const all = currentTasks.length;
-        const active = currentTasks.filter(t => !t.completed).length;
-        const completed = currentTasks.filter(t => t.completed).length;
-        const now = new Date();
-        const overdue = currentTasks.filter(t => !t.completed && t.deadline && new Date(t.deadline) < now).length;
-        document.getElementById('totalCount').innerText = all;
-        document.getElementById('activeCount').innerText = active;
-        document.getElementById('completedCount').innerText = completed;
-        document.getElementById('overdueCount').innerText = overdue;
+        const all = currentTasks.length, active = currentTasks.filter(t => !t.completed).length, completed = currentTasks.filter(t => t.completed).length;
+        const now = new Date(), overdue = currentTasks.filter(t => !t.completed && t.deadline && new Date(t.deadline) < now).length;
+        document.getElementById('totalCount').innerText = all; document.getElementById('activeCount').innerText = active; document.getElementById('completedCount').innerText = completed; document.getElementById('overdueCount').innerText = overdue;
     }
     function renderTaskList() {
         const container = document.getElementById('taskList');
@@ -424,100 +375,45 @@
             const priorityText = task.priority === 'high' ? '🔴 Высокий' : (task.priority === 'medium' ? '🟡 Средний' : '🟢 Низкий');
             const catIcon = task.category === 'work' ? '💼' : (task.category === 'personal' ? '🏠' : '📚');
             const catName = task.category === 'work' ? 'Работа' : (task.category === 'personal' ? 'Личное' : 'Учёба');
-            html += `
-                <div class="task-item" data-id="${task.id}">
-                    <div class="task-left">
-                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}">
-                        <span class="task-title ${task.completed ? 'task-completed' : ''}">${escapeHtml(task.title)}</span>
-                        <span class="task-priority">${priorityText}</span>
-                        <span class="category-badge" style="font-size:0.7rem;">${catIcon} ${catName}</span>
-                        ${task.deadline ? `<span style="font-size:0.7rem;">📅 ${new Date(task.deadline).toLocaleString()}</span>` : ''}
-                        ${isOverdue ? '<span style="color:#f97316;">⚠️ Просрочено</span>' : ''}
-                    </div>
-                    <div class="task-right">
-                        <button class="task-edit" data-id="${task.id}">✏️</button>
-                        <button class="task-delete" data-id="${task.id}">🗑️</button>
-                    </div>
-                </div>
-            `;
+            html += `<div class="task-item" data-id="${task.id}"><div class="task-left"><input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}"><span class="task-title ${task.completed ? 'task-completed' : ''}">${escapeHtml(task.title)}</span><span class="task-priority">${priorityText}</span><span class="category-badge" style="font-size:0.7rem;">${catIcon} ${catName}</span>${task.deadline ? `<span style="font-size:0.7rem;">📅 ${new Date(task.deadline).toLocaleString()}</span>` : ''}${isOverdue ? '<span style="color:#f97316;">⚠️ Просрочено</span>' : ''}</div><div class="task-right"><button class="task-edit" data-id="${task.id}">✏️</button><button class="task-delete" data-id="${task.id}">🗑️</button></div></div>`;
         });
         container.innerHTML = html;
         document.querySelectorAll('.task-checkbox').forEach(cb => cb.addEventListener('change', (e) => toggleTaskComplete(parseInt(e.target.dataset.id))));
         document.querySelectorAll('.task-edit').forEach(btn => btn.addEventListener('click', (e) => {
             const id = parseInt(e.currentTarget.dataset.id);
             const task = currentTasks.find(t => t.id == id);
-            if(task) {
-                const newTitle = prompt('Новое название:', task.title);
-                if(newTitle !== null) {
-                    const newCat = prompt('Категория (work/personal/study):', task.category);
-                    const newPriority = prompt('Приоритет (low/medium/high):', task.priority);
-                    editTask(id, newTitle, newCat, task.deadline, newPriority);
-                }
-            }
+            if(task) { const newTitle = prompt('Новое название:', task.title); if(newTitle !== null) { const newCat = prompt('Категория (work/personal/study):', task.category); const newPriority = prompt('Приоритет (low/medium/high):', task.priority); editTask(id, newTitle, newCat, task.deadline, newPriority); } }
         }));
-        document.querySelectorAll('.task-delete').forEach(btn => btn.addEventListener('click', (e) => {
-            if(confirm('Удалить задачу?')) deleteTask(parseInt(e.currentTarget.dataset.id));
-        }));
+        document.querySelectorAll('.task-delete').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Удалить задачу?')) deleteTask(parseInt(e.currentTarget.dataset.id)); }));
     }
     function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m] || m)); }
     function updateHeaderAvatar() {
         const headerDiv = document.getElementById('headerAvatar');
-        if(userProfile.avatarData && userProfile.avatarData.startsWith('data:image')) {
-            headerDiv.innerHTML = `<img src="${userProfile.avatarData}" style="width:100%;height:100%;object-fit:cover;">`;
-        } else { headerDiv.innerHTML = '😎'; }
+        if(userProfile.avatarData && userProfile.avatarData.startsWith('data:image')) headerDiv.innerHTML = `<img src="${userProfile.avatarData}" style="width:100%;height:100%;object-fit:cover;">`;
+        else headerDiv.innerHTML = '😎';
         document.getElementById('headerName').innerText = userProfile.name || (currentUser ? currentUser : 'Гость');
     }
     function renderProfileTab() {
         const preview = document.getElementById('avatarPreview');
-        if(userProfile.avatarData && userProfile.avatarData.startsWith('data:image')) {
-            preview.innerHTML = `<img src="${userProfile.avatarData}" style="width:100%;height:100%;object-fit:cover;">`;
-        } else { preview.innerHTML = '😎'; }
-        document.getElementById('userName').value = userProfile.name || '';
-        document.getElementById('userGender').value = userProfile.gender;
-        document.getElementById('userGoal').value = userProfile.goal || '';
+        if(userProfile.avatarData && userProfile.avatarData.startsWith('data:image')) preview.innerHTML = `<img src="${userProfile.avatarData}" style="width:100%;height:100%;object-fit:cover;">`;
+        else preview.innerHTML = '😎';
+        document.getElementById('userName').value = userProfile.name || ''; document.getElementById('userGender').value = userProfile.gender; document.getElementById('userGoal').value = userProfile.goal || '';
         document.getElementById('profileCompleted').innerText = userProfile.totalCompleted;
-        const level = getUserLevel();
-        document.getElementById('profileLevel').innerHTML = level.icon + ' ' + level.name;
+        const level = getUserLevel(); document.getElementById('profileLevel').innerHTML = level.icon + ' ' + level.name;
         document.getElementById('nextLevelTasks').innerText = getNextLevelTasks();
-        const logoutBtn = document.getElementById('logoutBtn');
-        const authBtns = document.getElementById('authButtons');
-        if(currentUser) {
-            logoutBtn.style.display = 'block';
-            authBtns.style.display = 'none';
-        } else {
-            logoutBtn.style.display = 'none';
-            authBtns.style.display = 'flex';
-        }
+        const logoutBtn = document.getElementById('logoutBtn'), authBtns = document.getElementById('authButtons');
+        if(currentUser) { logoutBtn.style.display = 'block'; authBtns.style.display = 'none'; } else { logoutBtn.style.display = 'none'; authBtns.style.display = 'flex'; }
     }
     function getUserLevel() { let lvl = levels[0]; for(let i=levels.length-1;i>=0;i--) if(userProfile.totalCompleted >= levels[i].min) return levels[i]; return lvl; }
     function getNextLevelTasks() { for(let i=0;i<levels.length;i++) if(userProfile.totalCompleted < levels[i].min) return levels[i].min - userProfile.totalCompleted; return 0; }
-    function renderLevelsTab() {
-        const container = document.getElementById('levelsContainer');
-        const current = getUserLevel();
-        let html = '';
-        levels.forEach(level => {
-            const isCurrent = level.name === current.name;
-            html += `<div class="level-card ${isCurrent ? 'current' : ''}">
-                        <div><span style="font-size:1.5rem;">${level.icon}</span> ${level.name}</div>
-                        <div>🏆 ${level.min}+ задач</div>
-                        <div style="font-size:0.8rem;">${level.desc}</div>
-                    </div>`;
-        });
-        container.innerHTML = html;
-    }
-    function renderFactsTab() {
-        const fact = facts[Math.floor(Math.random()*facts.length)];
-        const sci = scienceFacts[Math.floor(Math.random()*scienceFacts.length)];
-        document.getElementById('factOfTheDay').innerHTML = `<strong>🌟 Факт дня</strong><br>${fact.text}<br><small>— ${fact.source}</small>`;
-        document.getElementById('scienceFact').innerHTML = `<strong>🧠 Научное открытие</strong><br>${sci.text}`;
-    }
-
+    function renderLevelsTab() { let html = ''; const current = getUserLevel(); levels.forEach(level => { const isCurrent = level.name === current.name; html += `<div class="level-card ${isCurrent ? 'current' : ''}"><div><span style="font-size:1.5rem;">${level.icon}</span> ${level.name}</div><div>🏆 ${level.min}+ задач</div><div style="font-size:0.8rem;">${level.desc}</div></div>`; }); document.getElementById('levelsContainer').innerHTML = html; }
+    function renderFactsTab() { const fact = facts[Math.floor(Math.random()*facts.length)]; const sci = scienceFacts[Math.floor(Math.random()*scienceFacts.length)]; document.getElementById('factOfTheDay').innerHTML = `<strong>🌟 Факт дня</strong><br>${fact.text}<br><small>— ${fact.source}</small>`; document.getElementById('scienceFact').innerHTML = `<strong>🧠 Научное открытие</strong><br>${sci.text}`; }
     function render() {
         renderStats(); renderTaskList(); updateHeaderAvatar();
         document.querySelectorAll('.date-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.view === currentView));
         document.querySelectorAll('.category-badge').forEach(badge => badge.classList.toggle('active', badge.dataset.cat === currentCategory));
-        const promptDiv = document.getElementById('loginPrompt');
-        if(!currentUser) promptDiv.style.display = 'flex'; else promptDiv.style.display = 'none';
+        const mainAuthDiv = document.getElementById('authButtonsMain');
+        if(currentUser) mainAuthDiv.style.display = 'none'; else mainAuthDiv.style.display = 'flex';
     }
 
     // Модалки
@@ -532,103 +428,40 @@
     // Инициализация
     function init() {
         loadUserData();
-        // Тема
         const savedTheme = localStorage.getItem('planifica_theme');
-        if(savedTheme === 'dark') {
-            document.body.classList.remove('theme-teal'); document.body.classList.add('theme-dark');
-            document.querySelectorAll('.theme-option').forEach(opt => { opt.classList.remove('active'); if(opt.dataset.theme === 'dark') opt.classList.add('active'); });
-        } else {
-            document.body.classList.remove('theme-dark'); document.body.classList.add('theme-teal');
-            document.querySelectorAll('.theme-option').forEach(opt => { opt.classList.remove('active'); if(opt.dataset.theme === 'teal') opt.classList.add('active'); });
-        }
-        // Добавление задачи
-        document.getElementById('addBtn').addEventListener('click', () => {
-            if(!currentUser) { alert('Сначала войдите в аккаунт'); openAuthModal('login'); return; }
-            addTask(document.getElementById('taskTitle').value, document.getElementById('categorySelect').value, document.getElementById('deadlineInput').value, document.getElementById('prioritySelect').value);
-            document.getElementById('taskTitle').value = ''; document.getElementById('deadlineInput').value = '';
-        });
+        if(savedTheme === 'dark') { document.body.classList.remove('theme-teal'); document.body.classList.add('theme-dark'); document.querySelectorAll('.theme-option').forEach(opt => { opt.classList.remove('active'); if(opt.dataset.theme === 'dark') opt.classList.add('active'); }); }
+        else { document.body.classList.remove('theme-dark'); document.body.classList.add('theme-teal'); document.querySelectorAll('.theme-option').forEach(opt => { opt.classList.remove('active'); if(opt.dataset.theme === 'teal') opt.classList.add('active'); }); }
+        
+        document.getElementById('addBtn').addEventListener('click', () => { if(!currentUser) { alert('Сначала войдите'); openAuthModal('login'); return; } addTask(document.getElementById('taskTitle').value, document.getElementById('categorySelect').value, document.getElementById('deadlineInput').value, document.getElementById('prioritySelect').value); document.getElementById('taskTitle').value = ''; document.getElementById('deadlineInput').value = ''; });
         document.querySelectorAll('.date-btn').forEach(btn => btn.addEventListener('click', () => { currentView = btn.dataset.view; render(); }));
         document.querySelectorAll('.category-badge').forEach(badge => badge.addEventListener('click', () => { currentCategory = badge.dataset.cat; render(); }));
-        // Настройки
-        document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
-        document.getElementById('closeSettings').addEventListener('click', closeSettingsModal);
-        document.querySelectorAll('.theme-option').forEach(opt => opt.addEventListener('click', () => {
-            const theme = opt.dataset.theme;
-            if(theme === 'dark') { document.body.classList.remove('theme-teal'); document.body.classList.add('theme-dark'); localStorage.setItem('planifica_theme', 'dark'); }
-            else { document.body.classList.remove('theme-dark'); document.body.classList.add('theme-teal'); localStorage.setItem('planifica_theme', 'teal'); }
-            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
-            opt.classList.add('active');
-            renderFactsTab();
-        }));
-        // Профиль
-        document.getElementById('profileBtn').addEventListener('click', openProfileModal);
-        document.getElementById('closeProfile').addEventListener('click', closeProfileModal);
-        document.getElementById('saveProfile').addEventListener('click', () => {
-            if(!currentUser) { alert('Войдите, чтобы сохранить профиль'); openAuthModal('login'); return; }
-            userProfile.name = document.getElementById('userName').value;
-            userProfile.gender = document.getElementById('userGender').value;
-            userProfile.goal = document.getElementById('userGoal').value;
-            saveUserData(); render(); closeProfileModal();
-        });
-        document.getElementById('avatarInput').addEventListener('change', (e) => {
-            if(!currentUser) { alert('Войдите, чтобы загрузить фото'); openAuthModal('login'); return; }
-            const file = e.target.files[0];
-            if(file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (ev) => { userProfile.avatarData = ev.target.result; saveUserData(); renderProfileTab(); render(); };
-                reader.readAsDataURL(file);
-            }
-        });
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
-            const tab = btn.dataset.tab;
-            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            if(tab === 'levels') renderLevelsTab();
-            if(tab === 'facts') renderFactsTab();
-        }));
-        // Авторизация
+        
+        document.getElementById('settingsBtn').addEventListener('click', openSettingsModal); document.getElementById('closeSettings').addEventListener('click', closeSettingsModal);
+        document.querySelectorAll('.theme-option').forEach(opt => opt.addEventListener('click', () => { const theme = opt.dataset.theme; if(theme === 'dark') { document.body.classList.remove('theme-teal'); document.body.classList.add('theme-dark'); localStorage.setItem('planifica_theme', 'dark'); } else { document.body.classList.remove('theme-dark'); document.body.classList.add('theme-teal'); localStorage.setItem('planifica_theme', 'teal'); } document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active')); opt.classList.add('active'); renderFactsTab(); }));
+        
+        document.getElementById('profileBtn').addEventListener('click', openProfileModal); document.getElementById('closeProfile').addEventListener('click', closeProfileModal); document.getElementById('saveProfile').addEventListener('click', () => { if(!currentUser) { alert('Войдите, чтобы сохранить профиль'); openAuthModal('login'); return; } userProfile.name = document.getElementById('userName').value; userProfile.gender = document.getElementById('userGender').value; userProfile.goal = document.getElementById('userGoal').value; saveUserData(); render(); closeProfileModal(); });
+        document.getElementById('avatarInput').addEventListener('change', (e) => { if(!currentUser) { alert('Войдите, чтобы загрузить фото'); openAuthModal('login'); return; } const file = e.target.files[0]; if(file && file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = (ev) => { userProfile.avatarData = ev.target.result; saveUserData(); renderProfileTab(); render(); }; reader.readAsDataURL(file); } });
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => { const tab = btn.dataset.tab; document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active')); document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); if(tab === 'levels') renderLevelsTab(); if(tab === 'facts') renderFactsTab(); }));
+        
+        // Кнопки на главном экране
+        document.getElementById('mainRegisterBtn').addEventListener('click', () => openAuthModal('register'));
+        document.getElementById('mainLoginBtn').addEventListener('click', () => openAuthModal('login'));
+        
+        // Кнопки внутри модалки профиля
         document.getElementById('showRegisterBtn').addEventListener('click', () => openAuthModal('register'));
         document.getElementById('showLoginBtn').addEventListener('click', () => openAuthModal('login'));
         document.getElementById('logoutBtn').addEventListener('click', () => { logout(); closeProfileModal(); });
-        document.getElementById('showMainAuthBtn').addEventListener('click', () => openAuthModal('login'));
-        document.getElementById('authSubmitBtn').addEventListener('click', () => {
-            const loginVal = document.getElementById('authUsername').value.trim();
-            const passVal = document.getElementById('authPassword').value.trim();
-            if(!loginVal || !passVal) { alert('Заполните логин и пароль'); return; }
-            if(authMode === 'register') {
-                if(register(loginVal, passVal)) { alert('Регистрация успешна! Теперь войдите.'); openAuthModal('login'); }
-                else alert('Пользователь уже существует');
-            } else {
-                if(login(loginVal, passVal)) { alert('Вход выполнен'); render(); }
-                else alert('Неверный логин или пароль');
-            }
-        });
+        
+        document.getElementById('authSubmitBtn').addEventListener('click', () => { const loginVal = document.getElementById('authUsername').value.trim(); const passVal = document.getElementById('authPassword').value.trim(); if(!loginVal || !passVal) { alert('Заполните логин и пароль'); return; } if(authMode === 'register') { if(register(loginVal, passVal)) { alert('Регистрация успешна! Теперь войдите.'); openAuthModal('login'); } else alert('Пользователь уже существует'); } else { if(login(loginVal, passVal)) { alert('Вход выполнен'); render(); } else alert('Неверный логин или пароль'); } });
         document.getElementById('closeAuthBtn').addEventListener('click', closeAuthModal);
-        // Оценка
-        const ratingModal = document.getElementById('ratingModal');
-        const slider = document.getElementById('difficultySlider');
-        const emojiSpan = document.getElementById('sliderEmoji');
-        const msgSpan = document.getElementById('motivationMessage');
-        slider.addEventListener('input', () => {
-            const val = parseInt(slider.value);
-            if(val === 1) { emojiSpan.innerText = '😟'; msgSpan.innerText = 'Не расстраивайтесь, в следующий раз будет легче! 💪'; }
-            else if(val === 2) { emojiSpan.innerText = '😐'; msgSpan.innerText = 'Хорошо, но можно лучше! 🌟'; }
-            else { emojiSpan.innerText = '😊'; msgSpan.innerText = 'Отлично! Так держать! 🚀'; }
-        });
-        slider.dispatchEvent(new Event('input'));
-        document.getElementById('submitRating').addEventListener('click', () => { ratingModal.style.display = 'none'; currentRatingTaskId = null; });
-        window.addEventListener('click', (e) => {
-            if(e.target === document.getElementById('settingsModal')) closeSettingsModal();
-            if(e.target === document.getElementById('profileModal')) closeProfileModal();
-            if(e.target === ratingModal) ratingModal.style.display = 'none';
-            if(e.target === document.getElementById('authModal')) closeAuthModal();
-        });
-        // Если нет пользователя, показываем приветственное окно с предложением войти
-        if(!currentUser) {
-            setTimeout(() => { openAuthModal('login'); }, 500);
-        }
+        
+        const ratingModal = document.getElementById('ratingModal'), slider = document.getElementById('difficultySlider'), emojiSpan = document.getElementById('sliderEmoji'), msgSpan = document.getElementById('motivationMessage');
+        slider.addEventListener('input', () => { const val = parseInt(slider.value); if(val === 1) { emojiSpan.innerText = '😟'; msgSpan.innerText = 'Не расстраивайтесь, в следующий раз будет легче! 💪'; } else if(val === 2) { emojiSpan.innerText = '😐'; msgSpan.innerText = 'Хорошо, но можно лучше! 🌟'; } else { emojiSpan.innerText = '😊'; msgSpan.innerText = 'Отлично! Так держать! 🚀'; } }); slider.dispatchEvent(new Event('input')); document.getElementById('submitRating').addEventListener('click', () => { ratingModal.style.display = 'none'; currentRatingTaskId = null; });
+        
+        window.addEventListener('click', (e) => { if(e.target === document.getElementById('settingsModal')) closeSettingsModal(); if(e.target === document.getElementById('profileModal')) closeProfileModal(); if(e.target === ratingModal) ratingModal.style.display = 'none'; if(e.target === document.getElementById('authModal')) closeAuthModal(); });
+        
+        if(!currentUser) setTimeout(() => openAuthModal('login'), 500);
         render();
     }
     init();
