@@ -36,8 +36,9 @@
         body.theme-teal .modal-content { background: white; border-radius: 32px; }
         body.theme-teal input, body.theme-teal select, body.theme-teal textarea { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 30px; padding: 12px; }
         body.theme-teal .theme-option.active { border-color: #14b8a6; box-shadow: 0 0 0 2px rgba(20,184,166,0.3); }
-        body.theme-teal .level-card { background: white; }
-        body.theme-teal .fact-card { background: white; }
+        body.theme-teal .level-card { background: white; border: 1px solid #ccfbf1; }
+        body.theme-teal .fact-card { background: #f0fdfa; border-left: 4px solid #14b8a6; }
+        body.theme-teal .science-fact { background: #e6f7ff; border-left: 4px solid #0ea5e9; }
 
         /* === ТЁМНАЯ ТЕМА === */
         body.theme-dark {
@@ -45,7 +46,7 @@
             color: #e2e8f0;
         }
         body.theme-dark header { background: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-        body.theme-dark .stats div { background: #1e293b; color: #f1f5f9; }
+        body.theme-dark .stats div { background: #1e293b; color: #f1f5f9; box-shadow: none; }
         body.theme-dark .task-item { background: #1e293b; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         body.theme-dark .category-badge { background: #334155; color: #14b8a6; }
         body.theme-dark .date-btn.active { background: #14b8a6; color: #0f172a; }
@@ -53,8 +54,9 @@
         body.theme-dark .modal-content { background: #1e293b; color: #e2e8f0; }
         body.theme-dark input, body.theme-dark select, body.theme-dark textarea { background: #334155; border-color: #475569; color: #f1f5f9; }
         body.theme-dark .theme-option.active { border-color: #14b8a6; }
-        body.theme-dark .level-card { background: #334155; }
-        body.theme-dark .fact-card { background: #334155; }
+        body.theme-dark .level-card { background: #334155; border: 1px solid #475569; }
+        body.theme-dark .fact-card { background: #0f172a; border-left: 4px solid #14b8a6; }
+        body.theme-dark .science-fact { background: #0c4a6e; border-left: 4px solid #38bdf8; }
 
         /* === ОБЩИЕ СТИЛИ === */
         .app-container {
@@ -111,6 +113,9 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             color: white;
         }
@@ -171,6 +176,7 @@
             gap: 8px;
             flex-wrap: wrap;
             margin-bottom: 12px;
+            align-items: center;
         }
         .row-inputs input, .row-inputs select {
             flex: 1;
@@ -322,16 +328,18 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            transition: 0.2s;
         }
         .level-card.current {
             background: #0f766e;
             color: white;
             border: 1px solid #14b8a6;
         }
-        .fact-card {
+        .fact-card, .science-fact {
             padding: 20px;
             border-radius: 20px;
             margin-bottom: 15px;
+            transition: 0.2s;
         }
         .slider-container {
             display: flex;
@@ -489,7 +497,7 @@
         
         <div id="tabFacts" class="tab-content">
             <div id="factOfTheDay" class="fact-card"></div>
-            <div id="scienceFact" class="fact-card"></div>
+            <div id="scienceFact" class="science-fact"></div>
         </div>
     </div>
 </div>
@@ -518,7 +526,7 @@
 
     let userProfile = {
         name: '',
-        avatarData: '', // base64 или пусто
+        avatarData: '',
         gender: 'male',
         goal: '',
         totalCompleted: 0
@@ -761,10 +769,12 @@
         const avatarImg = document.getElementById('avatarImg');
         if (userProfile.avatarData && userProfile.avatarData.startsWith('data:image')) {
             avatarImg.src = userProfile.avatarData;
+            avatarImg.style.display = 'block';
+            document.querySelector('#avatarPreview').innerHTML = '';
+            document.querySelector('#avatarPreview').appendChild(avatarImg);
         } else {
-            avatarImg.src = '';
-            avatarImg.parentElement.innerHTML = '😎';
             avatarImg.style.display = 'none';
+            document.querySelector('#avatarPreview').innerHTML = '😎';
         }
         document.getElementById('userName').value = userProfile.name || '';
         document.getElementById('userGender').value = userProfile.gender;
@@ -812,7 +822,7 @@
         const randomFact = facts[Math.floor(Math.random() * facts.length)];
         const randomScience = scienceFacts[Math.floor(Math.random() * scienceFacts.length)];
         document.getElementById('factOfTheDay').innerHTML = `<strong>🌟 Факт дня</strong><br>${randomFact.text}<br><small>— ${randomFact.source}</small>`;
-        document.getElementById('scienceFact').innerHTML = `<strong>🧠 Научный факт</strong><br>${randomScience.text}`;
+        document.getElementById('scienceFact').innerHTML = `<strong>🧠 Научное открытие</strong><br>${randomScience.text}`;
     }
 
     function updateHeaderAvatar() {
@@ -874,6 +884,8 @@
                 }
                 document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
                 opt.classList.add('active');
+                // перерисовываем факты, чтобы цветовые классы применились
+                renderFactsTab();
             });
         });
 
@@ -895,7 +907,6 @@
         });
 
         const avatarInput = document.getElementById('avatarInput');
-        document.querySelector('#avatarUploadLabel')?.addEventListener('click', () => avatarInput.click());
         const avatarLabel = document.querySelector('.avatar-upload label');
         if (avatarLabel) avatarLabel.addEventListener('click', () => avatarInput.click());
         avatarInput.addEventListener('change', (e) => {
